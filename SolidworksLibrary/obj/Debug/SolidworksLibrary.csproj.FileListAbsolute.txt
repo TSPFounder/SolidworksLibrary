@@ -1,0 +1,16 @@
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\SolidworksLibrary.csproj.AssemblyReference.cache
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SldWorks.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SolidWorks.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SwConst.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\SolidworksLibrary.csproj.ResolveComReference.cache
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\SolidworksLibrary.csproj.CoreCompileInputs.cache
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\SolidworksLibrary.exe.config
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\SolidworksLibrary.exe
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\SolidworksLibrary.pdb
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\SolidworksLibrary.exe
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\SolidworksLibrary.pdb
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.CosmosWorksLib.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.DesignCheckerLib.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SwDimXpert.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SwMotionStudy.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Interop.SWUtilities.dll
