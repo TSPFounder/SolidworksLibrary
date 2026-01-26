@@ -65,12 +65,14 @@ namespace SolidworksLibrary
 
             SolidworksApp myApp = new SolidworksApp();
             myApp.swApp = swApp;
+            
 
             return myApp;
         }
 
         [STAThread]
         static void Main(string[] args)
+
         {
             SolidworksApp swApplication = createSW_App();
 

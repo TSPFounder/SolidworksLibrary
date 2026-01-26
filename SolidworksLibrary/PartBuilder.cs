@@ -15,12 +15,12 @@ namespace SolidworksLibrary
 {
     internal class PartBuilder
     {
-        public PartBuilder(SldWorks.SldWorks swApp)
+        public PartBuilder(SldWorks.SldWorks swApp, int qty,double spacing, StationBuilder.CoordinateSystemType coordSystem, int axis)
         {
             myModel = new SW_Model();
             myModel.SwModelObject = createNewPart(swApp);
             mySketchBuilder = new SketchBuilder(myModel);
-            myStationBuilder = new StationBuilder(myModel);
+            myStationBuilder = new StationBuilder(swApp,myModel, qty,spacing, coordSystem, axis);
 
         }
         public SldWorks.PartDoc createNewPart(SldWorks.SldWorks swApp)

@@ -1,43 +1,408 @@
-﻿using CAD;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CAD;
 using SldWorks;
+using SwConst;
 
 namespace SolidworksLibrary
 {
     internal class SketchBuilder
     {
-        public SketchBuilder(SW_Model model) {
-            myModel = model;
-            SldWorks.ModelDoc2 swModelDoc = (SldWorks.ModelDoc2)model;
-            sketches = new List<CAD_Sketch>();
-            sketchMgr = new SketchManager();
-        }
-        public SldWorks.ModelDoc2 swModelDoc { get; set; }
-        public SW_Model myModel { get; set; }
-        public List<CAD_Sketch> sketches { get; set; }
-        public SketchManager sketchMgr { get; set; }
+        public ModelDoc2 SwModelDoc { get; set; }
+        public SW_Model MyModel { get; set; }
+        public SketchManager SketchMgr { get; set; }
+        public string PlaneName { get; set; }
 
-        public Sketch createCircleSketch(double centerX, double centerY, double radius)
+        public SketchBuilder(SW_Model model, string planeName = "Front Plane")
         {
-            // Select the Front Plane (Standard name in most templates)
-            swModelDoc.Extension.SelectByID2("Front Plane", "PLANE", 0, 0, 0, false, 0, null, 0);
+            MyModel = model;
+            SwModelDoc = (ModelDoc2)model.SwModelObject;
+            SketchMgr = SwModelDoc.SketchManager;
+            PlaneName = planeName;
+        }
 
-            // Start the Sketch
-            sketchMgr.InsertSketch(true);
+        // -------------------------------------------
+        // Sketch Session Management
+        // -------------------------------------------
 
-            // Draw a Circle (Center X, Center Y, Center Z, Radius X, Radius Y, Radius Z)
-            // Units are in meters by default (0.05 = 50mm)
-            Sketch sketch = (Sketch)sketchMgr.CreateCircle(centerX, centerY, 0, radius, 0, 0);
+        private void BeginSketch()
+        {
+            SwModelDoc.Extension.SelectByID2(PlaneName, "PLANE", 0, 0, 0, false, 0, null, 0);
+            SketchMgr.InsertSketch(true);
+        }
 
-            // Exit the sketch to save changes
-            sketchMgr.InsertSketch(true);
+        private void EndSketch()
+        {
+            SketchMgr.InsertSketch(true);
+        }
 
-            return sketch;
+        // -------------------------------------------
+        // Lines
+        // -------------------------------------------
+
+        public object CreateLine(double x1, double y1, double x2, double y2)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateLine(x1, y1, 0, x2, y2, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCenterLine(double x1, double y1, double x2, double y2)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCenterLine(x1, y1, 0, x2, y2, 0);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Circles
+        // -------------------------------------------
+
+        public object CreateCircle(double centerX, double centerY, double radius)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCircle(centerX, centerY, 0, centerX + radius, centerY, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCircleByRadius(double centerX, double centerY, double radius)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCircleByRadius(centerX, centerY, 0, radius);
+            EndSketch();
+            return result;
+        }
+
+        public object CreatePerimeterCircle(double x1, double y1, double x2, double y2, double x3, double y3)
+        {
+            BeginSketch();
+            object result = SketchMgr.PerimeterCircle(x1, y1, x2, y2, x3, y3);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Arcs
+        // -------------------------------------------
+
+        public object CreateArc(double centerX, double centerY,
+            double startX, double startY, double endX, double endY, short direction)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateArc(centerX, centerY, 0,
+                startX, startY, 0, endX, endY, 0, direction);
+            EndSketch();
+            return result;
+        }
+
+        public object Create3PointArc(double startX, double startY,
+            double endX, double endY, double midX, double midY)
+        {
+            BeginSketch();
+            object result = SketchMgr.Create3PointArc(startX, startY, 0,
+                endX, endY, 0, midX, midY, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateTangentArc(double startX, double startY,
+            double endX, double endY, int arcType)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateTangentArc(startX, startY, 0,
+                endX, endY, 0, arcType);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Ellipses
+        // -------------------------------------------
+
+        public object CreateEllipse(double centerX, double centerY,
+            double majorX, double majorY, double minorX, double minorY)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateEllipse(centerX, centerY, 0,
+                majorX, majorY, 0, minorX, minorY, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateEllipticalArc(double centerX, double centerY,
+            double majorX, double majorY, double minorX, double minorY,
+            double startX, double startY, double endX, double endY,
+            short direction)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateEllipticalArc(centerX, centerY, 0,
+                majorX, majorY, 0, minorX, minorY, 0,
+                startX, startY, 0, endX, endY, 0, direction);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Rectangles
+        // -------------------------------------------
+
+        public object CreateCornerRectangle(double x1, double y1, double x2, double y2)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCornerRectangle(x1, y1, 0, x2, y2, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCenterRectangle(double centerX, double centerY,
+            double cornerX, double cornerY)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCenterRectangle(centerX, centerY, 0,
+                cornerX, cornerY, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object Create3PointCornerRectangle(double x1, double y1,
+            double x2, double y2, double x3, double y3)
+        {
+            BeginSketch();
+            object result = SketchMgr.Create3PointCornerRectangle(x1, y1, 0,
+                x2, y2, 0, x3, y3, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object Create3PointCenterRectangle(double centerX, double centerY,
+            double x2, double y2, double x3, double y3)
+        {
+            BeginSketch();
+            object result = SketchMgr.Create3PointCenterRectangle(centerX, centerY, 0,
+                x2, y2, 0, x3, y3, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateParallelogram(double x1, double y1,
+            double x2, double y2, double x3, double y3)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateParallelogram(x1, y1, 0,
+                x2, y2, 0, x3, y3, 0);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Polygon
+        // -------------------------------------------
+
+        public object CreatePolygon(double centerX, double centerY,
+            double vertexX, double vertexY, int sides, bool inscribed)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreatePolygon(centerX, centerY, 0,
+                vertexX, vertexY, 0, sides, inscribed);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Slots
+        // -------------------------------------------
+
+        public object CreateStraightSlot(double x1, double y1, double x2, double y2, double width)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateSketchSlot(
+                (int)swSketchSlotCreationType_e.swSketchSlotCreationType_line,
+                (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
+                width, x1, y1, 0, x2, y2, 0, 0, 0, 0, 1, false);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCenterpointStraightSlot(double centerX, double centerY,
+            double endX, double endY, double width)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateSketchSlot(
+                (int)swSketchSlotCreationType_e.swSketchSlotCreationType_line,
+                (int)swSketchSlotLengthType_e.swSketchSlotLengthType_FullLength,
+                width, centerX, centerY, 0, endX, endY, 0, 0, 0, 0, 1, false);
+            EndSketch();
+            return result;
+        }
+
+        public object Create3PointArcSlot(double x1, double y1,
+            double x2, double y2, double x3, double y3, double width)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateSketchSlot(
+                (int)swSketchSlotCreationType_e.swSketchSlotCreationType_3pointarc,
+                (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
+                width, x1, y1, 0, x2, y2, 0, x3, y3, 0, 1, false);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCenterpointArcSlot(double centerX, double centerY,
+            double startX, double startY, double endX, double endY, double width)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateSketchSlot(
+                (int)swSketchSlotCreationType_e.swSketchSlotCreationType_arc,
+                (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
+                width, centerX, centerY, 0, startX, startY, 0, endX, endY, 0, 1, false);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Splines
+        // -------------------------------------------
+
+        public object CreateSpline(double[,] points)
+        {
+            BeginSketch();
+            int numPoints = points.GetLength(0);
+            Array pointArray = new double[numPoints * 3];
+            for (int i = 0; i < numPoints; i++)
+            {
+                ((double[])pointArray)[i * 3] = points[i, 0];
+                ((double[])pointArray)[i * 3 + 1] = points[i, 1];
+                ((double[])pointArray)[i * 3 + 2] = 0;
+            }
+            object result = SketchMgr.CreateSpline2(pointArray, false);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Parabola & Conic
+        // -------------------------------------------
+
+        public object CreateParabola(double focusX, double focusY,
+            double apexX, double apexY, double startX, double startY,
+            double endX, double endY)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateParabola(focusX, focusY, 0,
+                apexX, apexY, 0, startX, startY, 0, endX, endY, 0);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateConic(double startX, double startY,
+            double endX, double endY, double apexX, double apexY, double rho)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateConic(startX, startY, 0,
+                endX, endY, 0, apexX, apexY, 0, rho, 0, 0);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Point
+        // -------------------------------------------
+
+        public object CreatePoint(double x, double y)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreatePoint(x, y, 0);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Text
+        // -------------------------------------------
+
+        public object CreateText(string text, double x, double y,
+            int fontHeight, int fontAngle, int centerAlign, int flip, int vFlip)
+        {
+            BeginSketch();
+            object result = SwModelDoc.InsertSketchText(x, y, 0, text,
+                fontHeight, fontAngle, centerAlign, flip, vFlip);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Fillet & Chamfer
+        // -------------------------------------------
+
+        public object CreateFillet(double radius)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateFillet(radius, (int)swConstraintType_e.swConstraintType_TANGENT);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateChamfer(int type, double distance1, double distance2)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateChamfer(type, distance1, distance2);
+            EndSketch();
+            return result;
+        }
+
+        // -------------------------------------------
+        // Offset & Mirror
+        // -------------------------------------------
+
+        public bool CreateOffset(double offset, bool bothDirections, bool chain,
+            int capEnds, int makeConstruction, bool addDimensions)
+        {
+            BeginSketch();
+            bool result = SketchMgr.SketchOffset2(offset, bothDirections, chain,
+                capEnds, makeConstruction, addDimensions);
+            EndSketch();
+            return result;
+        }
+
+        public void CreateMirror()
+        {
+            BeginSketch();
+            SwModelDoc.SketchMirror();
+            EndSketch();
+        }
+
+        // -------------------------------------------
+        // Linear & Circular Pattern
+        // -------------------------------------------
+
+        public bool CreateLinearPattern(int numX, int numY,
+            double spacingX, double spacingY, double angleX, double angleY,
+            string deleteInstances, bool xSpacingDim, bool ySpacingDim,
+            bool angleDim, bool createNumDimX, bool createNumDimY)
+        {
+            BeginSketch();
+            bool result = SketchMgr.CreateLinearSketchStepAndRepeat(
+                numX, numY, spacingX, spacingY, angleX, angleY,
+                deleteInstances, xSpacingDim, ySpacingDim, angleDim,
+                createNumDimX, createNumDimY);
+            EndSketch();
+            return result;
+        }
+
+        public object CreateCircularPattern(int count, double radius,
+            double spacing, double arcAngle)
+        {
+            BeginSketch();
+            object result = SketchMgr.CreateCircularSketchStepAndRepeat(
+                arcAngle, spacing, count, radius, true, "", true, true, true);
+            EndSketch();
+            return result;
         }
     }
 }
