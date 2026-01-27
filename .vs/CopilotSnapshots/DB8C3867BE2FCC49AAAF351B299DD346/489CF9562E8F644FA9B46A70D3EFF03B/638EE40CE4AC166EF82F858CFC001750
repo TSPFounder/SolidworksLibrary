@@ -1,0 +1,291 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using CAD;
+using SldWorks;
+using SwConst;
+
+namespace SolidworksLibrary
+{
+    internal class FeatureBuilder
+    {
+        public ModelDoc2 SwModelDoc { get; set; }
+        public FeatureManager FeatMgr { get; set; }
+        public SW_Model MyModel { get; set; }
+
+        public FeatureBuilder(SW_Model model)
+        {
+            MyModel = model;
+            SwModelDoc = (ModelDoc2)model.SwModelObject;
+            FeatMgr = SwModelDoc.FeatureManager;
+        }
+
+        // -------------------------------------------
+        // Extrusion (Boss)
+        // -------------------------------------------
+
+        public Feature CreateExtrusion(bool singleDirection, bool flipDirection,
+            int endCondition1, double depth1,
+            int endCondition2, double depth2,
+            bool draftWhileExtruding1, double draftAngle1,
+            bool draftWhileExtruding2, double draftAngle2,
+            bool merge, bool useFeatScope, bool useAutoSelect)
+        {
+            return (Feature)FeatMgr.FeatureExtrusion3(
+                singleDirection, flipDirection, false,
+                endCondition1, endCondition2,
+                depth1, depth2,
+                draftWhileExtruding1, draftWhileExtruding2,
+                draftWhileExtruding1, draftWhileExtruding2,
+                draftAngle1, draftAngle2,
+                false, false, false, false,
+                merge, useFeatScope, useAutoSelect,
+                0, 0, false);
+        }
+
+        // -------------------------------------------
+        // Cut Extrusion
+        // -------------------------------------------
+
+        public Feature CreateCutExtrusion(bool singleDirection, bool flipDirection,
+            int endCondition1, double depth1,
+            int endCondition2, double depth2,
+            bool draftWhileExtruding1, double draftAngle1,
+            bool draftWhileExtruding2, double draftAngle2,
+            bool normalCut, bool useFeatScope, bool useAutoSelect)
+        {
+            return (Feature)FeatMgr.FeatureCut4(
+                singleDirection, flipDirection, false,
+                endCondition1, endCondition2,
+                depth1, depth2,
+                draftWhileExtruding1, draftWhileExtruding2,
+                draftWhileExtruding1, draftWhileExtruding2,
+                draftAngle1, draftAngle2,
+                false, false, false, false,
+                normalCut, useFeatScope, useAutoSelect,
+                false, false, false,
+                0, 0.0, false, false);
+        }
+
+        // -------------------------------------------
+        // Revolve
+        // -------------------------------------------
+
+        public Feature CreateRevolve(bool singleDirection, bool isSolid,
+            bool isCut, bool reverseDirection,
+            int endCondition1, double angle1,
+            int endCondition2, double angle2,
+            bool merge, bool useFeatScope, bool useAutoSelect)
+        {
+            return (Feature)FeatMgr.FeatureRevolve2(
+                singleDirection, isSolid, false, isCut,
+                reverseDirection, false,
+                endCondition1, angle1,
+                endCondition2, angle2,
+                false, false, false, false,
+                0, 0, 0,
+                merge, useFeatScope, useAutoSelect);
+        }
+
+        // -------------------------------------------
+        // Hole Wizard (Threaded Holes)
+        // -------------------------------------------
+
+        public Feature CreateHoleWizard(int holeType, int standard,
+            int fastenerType, string size, int endCondition,
+            double diameter, double depth,
+            double headClearance, double headDiameter,
+            double headDepth, double threadDepth,
+            double threadDiameter)
+        {
+            return (Feature)FeatMgr.HoleWizard5(
+                holeType, standard, fastenerType,
+                size, endCondition,
+                diameter, depth,
+                headClearance, headDiameter, headDepth,
+                threadDiameter, threadDepth,
+                0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        public Feature CreateThreadedHole(string size, double depth,
+            double threadDepth, int standard, int fastenerType)
+        {
+            return (Feature)FeatMgr.HoleWizard5(
+                (int)swWzdGeneralHoleTypes_e.swWzdHoleTypeTap,
+                standard, fastenerType,
+                size,
+                (int)swEndConditions_e.swEndCondBlind,
+                0, depth,
+                0, 0, 0,
+                0, threadDepth,
+                0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        public Feature CreateCounterboreHole(string size, double depth,
+            double cboreDiameter, double cboreDepth,
+            int standard, int fastenerType)
+        {
+            return (Feature)FeatMgr.HoleWizard5(
+                (int)swWzdGeneralHoleTypes_e.swWzdHoleTypeCBore,
+                standard, fastenerType,
+                size,
+                (int)swEndConditions_e.swEndCondBlind,
+                0, depth,
+                0, cboreDiameter, cboreDepth,
+                0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        public Feature CreateCountersinkHole(string size, double depth,
+            double csinkDiameter, double csinkAngle,
+            int standard, int fastenerType)
+        {
+            return (Feature)FeatMgr.HoleWizard5(
+                (int)swWzdGeneralHoleTypes_e.swWzdHoleTypeCSink,
+                standard, fastenerType,
+                size,
+                (int)swEndConditions_e.swEndCondBlind,
+                0, depth,
+                0, csinkDiameter, csinkAngle,
+                0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0);
+        }
+
+        // -------------------------------------------
+        // Chamfer
+        // -------------------------------------------
+
+        public void CreateChamfer(double width, double angle, bool flipDirection)
+        {
+            SwModelDoc.FeatureChamfer(width, angle, flipDirection);
+        }
+
+        // -------------------------------------------
+        // Fillet
+        // -------------------------------------------
+
+        public Feature CreateFillet(double radius, int filletType,
+            int overflowType, int radiusType,
+            bool propagateToTangentFaces)
+        {
+            return (Feature)FeatMgr.FeatureFillet3(
+                filletType, radius, 0,
+                0, radiusType, overflowType,
+                0, 0, 0, 0,
+                propagateToTangentFaces, false,
+                false, false, false, false, false,
+                false, false, false);
+        }
+
+        public Feature CreateConstantRadiusFillet(double radius,
+            bool propagateToTangentFaces)
+        {
+            return (Feature)FeatMgr.FeatureFillet3(
+                (int)swFeatureFilletType_e.swFeatureFilletType_Simple,
+                radius, 0,
+                0, 0, 0,
+                0, 0, 0, 0,
+                propagateToTangentFaces, false,
+                false, false, false, false, false,
+                false, false, false);
+        }
+
+        // -------------------------------------------
+        // Shell
+        // -------------------------------------------
+
+        public Feature CreateShell(double thickness, bool shellOutward)
+        {
+            return (Feature)FeatMgr.InsertFeatureShell(thickness, shellOutward);
+        }
+
+        // -------------------------------------------
+        // Draft
+        // -------------------------------------------
+
+        public Feature CreateDraft(double angle, bool reverseDirection, int draftType)
+        {
+            return (Feature)FeatMgr.InsertDraftFeature2(
+                angle, reverseDirection, draftType, 0, 0);
+        }
+
+        // -------------------------------------------
+        // Linear Pattern
+        // -------------------------------------------
+
+        public Feature CreateLinearPattern(int numDir1, double spacingDir1,
+            int numDir2, double spacingDir2,
+            bool reverseDir1, bool reverseDir2,
+            bool geometryPattern, bool varySketch,
+            string skipInstances1, string skipInstances2)
+        {
+            return (Feature)FeatMgr.FeatureLinearPattern4(
+                numDir1, spacingDir1,
+                numDir2, spacingDir2,
+                reverseDir1, reverseDir2,
+                skipInstances1, skipInstances2,
+                geometryPattern, varySketch,
+                true, true,
+                false, false,
+                false, false, false, false,
+                0, 0);
+        }
+
+        // -------------------------------------------
+        // Circular Pattern
+        // -------------------------------------------
+
+        public Feature CreateCircularPattern(int totalInstances, double angularSpacing,
+            bool reverseDirection, bool geometryPattern,
+            bool equalSpacing, bool varySketch,
+            string skipInstances)
+        {
+            return (Feature)FeatMgr.FeatureCircularPattern4(
+                totalInstances, angularSpacing,
+                reverseDirection, skipInstances,
+                geometryPattern, equalSpacing, varySketch);
+        }
+
+        // -------------------------------------------
+        // Mirror
+        // -------------------------------------------
+
+        public Feature CreateMirrorFeature(bool geometryPattern, bool propagateVisualProps)
+        {
+            return (Feature)FeatMgr.InsertMirrorFeature2(
+                geometryPattern, false, propagateVisualProps, false);
+        }
+
+        // -------------------------------------------
+        // Rib
+        // -------------------------------------------
+
+        public Feature CreateRib(double thickness, int ribType, bool flipMaterial,
+            bool reverseThickness, bool naturalDraft, double draftAngle)
+        {
+            return (Feature)FeatMgr.InsertRib(
+                thickness, ribType, flipMaterial,
+                reverseThickness, naturalDraft, draftAngle);
+        }
+
+        // -------------------------------------------
+        // Slot (Cut)
+        // -------------------------------------------
+
+        public Feature CreateSlotCut(double depth,
+            bool singleDirection, bool flipDirection)
+        {
+            return (Feature)FeatMgr.FeatureCut4(
+                singleDirection, flipDirection, false,
+                (int)swEndConditions_e.swEndCondBlind, 0,
+                depth, 0,
+                false, false, false, false,
+                0, 0,
+                false, false, false, false,
+                false, true, true, true,
+                false, false, false, true);
+        }
+    }
+}

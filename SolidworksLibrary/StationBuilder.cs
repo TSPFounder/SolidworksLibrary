@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CAD;
 using Mathematics;
 using SldWorks;
@@ -23,7 +20,7 @@ namespace SolidworksLibrary
         public enum CylindricalAxis { R, Theta, Z }
         public enum SphericalAxis { R, Theta, Phi }
 
-        public SW_Model MyModel { get; set; }
+        public SolidworksModel MyModel { get; set; }
         public SldWorks.SldWorks SwApp { get; set; }
         public int Quantity { get; set; }
         public double Spacing { get; set; }
@@ -32,7 +29,7 @@ namespace SolidworksLibrary
 
         public List<CAD_Station> Stations { get; private set; }
 
-        public StationBuilder(SldWorks.SldWorks swApp, SW_Model model, int quantity, double spacing,
+        public StationBuilder(SldWorks.SldWorks swApp, SolidworksModel model, int quantity, double spacing,
             CoordinateSystemType coordSystem, int axis)
         {
             SwApp = swApp;
@@ -311,7 +308,6 @@ namespace SolidworksLibrary
             string planeName = sketchPlane.Path ?? sketchPlane.Name;
             ModelDocExtension swExt = swModel.Extension;
 
-            // Select the plane as the origin reference (Mark 1)
             swExt.SelectByID2(planeName, "PLANE", position[0], position[1], position[2],
                 false, 1, null, 0);
 

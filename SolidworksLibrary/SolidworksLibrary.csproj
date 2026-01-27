@@ -33,13 +33,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>C:\Program Files\Dassault Systemes\SOLIDWORKS 3DEXPERIENCE\SOLIDWORKS\SolidWorks.Interop.sldworks.dll</HintPath>
+    <Reference Include="ApplicationLibrary">
+      <HintPath>..\..\..\ApplicationLibrary\ApplicationLibrary\ApplicationLibrary\bin\Debug\net10.0\ApplicationLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="CAD_Library">
+      <HintPath>..\..\..\CAD_Library\CAD_Library\CAD_Library\bin\Debug\net10.0\CAD_Library.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonObjectsLibrary">
+      <HintPath>..\..\..\CommonObjectsLibrary\CommonObjectsLibrary\CommonObjectsLibrary\bin\Debug\net10.0\CommonObjectsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="ElectricalLibrary">
+      <HintPath>..\..\..\ElectricalLibrary\ElectricalLibrary\ElectricalLibrary\bin\Debug\net10.0\ElectricalLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="FluidicsLibrary">
+      <HintPath>..\..\..\FluidicsLibrary\FluidicsLibrary\FluidicsLibrary\bin\Debug\net10.0\FluidicsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.SolidWorks">
+      <HintPath>obj\Debug\Interop.SolidWorks.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>C:\Program Files\Dassault Systemes\SOLIDWORKS 3DEXPERIENCE\SOLIDWORKS\SolidWorks.Interop.swconst.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+    <Reference Include="MathematicsLibrary">
+      <HintPath>..\..\..\MathematicsLibrary\MathematicsLibrary\MathematicsLibrary\bin\Debug\net10.0\MathematicsLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="StructuresLibrary">
+      <HintPath>..\..\..\StructuresLibrary\StructuresLibrary\StructuresLibrary\bin\Debug\net10.0\StructuresLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="SysML_Library">
+      <HintPath>..\..\..\SysML_Library\SysML_Library\SysML_Library\bin\Debug\net10.0\SysML_Library.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,18 +69,30 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="SystemsEngineeringLibrary">
+      <HintPath>..\..\..\SystemsEngineeringLibrary\SystemsEngineeringLibrary\SystemsEngineeringLibrary\bin\Debug\net10.0\SystemsEngineeringLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyBuilder.cs" />
+    <Compile Include="ConstructionBuilder.cs" />
+    <Compile Include="DrawingBuilder.cs" />
+    <Compile Include="FeatureBuilder.cs" />
+    <Compile Include="PartBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SketchBuilder.cs" />
+    <Compile Include="SolidworksApp.cs" />
+    <Compile Include="SolidworksModel.cs" />
+    <Compile Include="StationBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="CosmosWorksLib">
-      <Guid>{4B6A9EBF-8638-4C95-98C9-81AE0A7E3B24}</Guid>
-      <VersionMajor>18</VersionMajor>
+      <Guid>{B5697F4F-C68A-4685-A7B8-478AF05EF605}</Guid>
+      <VersionMajor>19</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
@@ -68,7 +100,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="DesignCheckerLib">
-      <Guid>{BC21C8D3-0700-430D-8DCD-D3148133237B}</Guid>
+      <Guid>{D0A9841D-752D-4C47-ADD9-6254DEE0F559}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
@@ -78,16 +110,16 @@
     </COMReference>
     <COMReference Include="SldWorks">
       <Guid>{83A33D31-27C5-11CE-BFD4-00400513BB57}</Guid>
-      <VersionMajor>33</VersionMajor>
+      <VersionMajor>34</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="SolidWorks">
-      <Guid>{801A0000-A66C-11D3-A8BD-0000861EBBD6}</Guid>
-      <VersionMajor>33</VersionMajor>
+    <COMReference Include="SwCommands">
+      <Guid>{0AC1DE9F-3FBC-4C25-868D-7D4E9139CCE0}</Guid>
+      <VersionMajor>34</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
@@ -96,7 +128,7 @@
     </COMReference>
     <COMReference Include="SwConst">
       <Guid>{4687F359-55D0-4CD3-B6CF-2EB42C11F989}</Guid>
-      <VersionMajor>33</VersionMajor>
+      <VersionMajor>34</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
@@ -105,16 +137,7 @@
     </COMReference>
     <COMReference Include="SwDimXpert">
       <Guid>{582D0D5B-FF58-42CD-8968-A8A001A52454}</Guid>
-      <VersionMajor>33</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="SwDocumentMgr">
-      <Guid>{4F55C30F-4CFD-49E9-A1A2-00C161EF4395}</Guid>
-      <VersionMajor>33</VersionMajor>
+      <VersionMajor>34</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
@@ -123,16 +146,7 @@
     </COMReference>
     <COMReference Include="SwMotionStudy">
       <Guid>{45DB5211-F358-4B5E-A235-E792EB818BAA}</Guid>
-      <VersionMajor>33</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="SWPOPUPUTILLib">
-      <Guid>{F16C586B-F6B2-45E4-848C-E4DEA6571A9B}</Guid>
-      <VersionMajor>33</VersionMajor>
+      <VersionMajor>34</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>

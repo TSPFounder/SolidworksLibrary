@@ -3,8 +3,48 @@
   "WorkspaceRootPath": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|d:\\dreamworldmaker\\projects\\dotnet\\solidworkslibrary\\solidworkslibrary\\solidworkslibrary\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\sketchbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\sketchbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\stationbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\stationbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\featurebuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\featurebuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|d:\\dreamworldmaker\\projects\\dotnet\\solidworkslibrary\\solidworkslibrary\\solidworkslibrary\\partbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\partbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\solidworksapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\solidworksapp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\constructionbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\constructionbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\assemblybuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\assemblybuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\drawingbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8365F667-4BEF-49D0-8E69-2E3ECD988FE3}|SolidworksLibrary\\SolidworksLibrary.csproj|solutionrelative:solidworkslibrary\\drawingbuilder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\solidworkslibrary\\sw_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:solidworkslibrary\\sw_model.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,7 +54,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -26,20 +66,144 @@
             },
             {
               "$type": "Bookmark",
-              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FeatureBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\FeatureBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\FeatureBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\FeatureBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\FeatureBuilder.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAkwDEAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-23T20:48:43.474Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StationBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\StationBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\StationBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\StationBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\StationBuilder.cs",
+              "ViewState": "AgIAACIBAAAAAAAAAAAAACwBAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-23T20:23:10.845Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SketchBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SketchBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\SketchBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SketchBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\SketchBuilder.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAowA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-23T15:58:23.969Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\Properties\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\Properties\\AssemblyInfo.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\Properties\\AssemblyInfo.cs",
+              "RelativeToolTip": "SolidworksLibrary\\Properties\\AssemblyInfo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T15:49:46.272Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SolidworksApp.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SolidworksApp.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\SolidworksApp.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SolidworksApp.cs",
+              "RelativeToolTip": "SolidworksLibrary\\SolidworksApp.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-14T00:52:21.745Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ConstructionBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\ConstructionBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\ConstructionBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\ConstructionBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\ConstructionBuilder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T23:10:41.925Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "DrawingBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\DrawingBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\DrawingBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\DrawingBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\DrawingBuilder.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T18:24:06.958Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AssemblyBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\AssemblyBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\AssemblyBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\AssemblyBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\AssemblyBuilder.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAqwKsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T18:23:38.864Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PartBuilder.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\PartBuilder.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\PartBuilder.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\PartBuilder.cs",
+              "RelativeToolTip": "SolidworksLibrary\\PartBuilder.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-13T17:47:56.747Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "SW_Model.cs",
+              "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SW_Model.cs",
+              "RelativeDocumentMoniker": "SolidworksLibrary\\SW_Model.cs",
+              "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\SW_Model.cs",
+              "RelativeToolTip": "SolidworksLibrary\\SW_Model.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-27T17:55:36.632Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\Program.cs",
               "RelativeDocumentMoniker": "SolidworksLibrary\\Program.cs",
               "ToolTip": "D:\\DreamWorldMaker\\Projects\\DotNet\\SolidworksLibrary\\SolidworksLibrary\\SolidworksLibrary\\Program.cs",
               "RelativeToolTip": "SolidworksLibrary\\Program.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAxwBsAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABYAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-19T16:22:37.403Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-19T16:22:37.403Z"
             }
           ]
         }

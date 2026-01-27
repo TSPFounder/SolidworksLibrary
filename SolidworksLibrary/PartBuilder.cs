@@ -1,39 +1,24 @@
-﻿using CAD;
-using SolidWorks;
+using CAD;
 using SwConst;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using CAD;
 
 namespace SolidworksLibrary
 {
     internal class PartBuilder
     {
-        public PartBuilder(SldWorks.SldWorks swApp, int qty,double spacing, StationBuilder.CoordinateSystemType coordSystem, int axis)
+        public PartBuilder(SldWorks.SldWorks swApp, int qty, double spacing, StationBuilder.CoordinateSystemType coordSystem, int axis)
         {
-            myModel = new SW_Model();
-            myModel.SwModelObject = createNewPart(swApp);
-            mySketchBuilder = new SketchBuilder(myModel);
-            myStationBuilder = new StationBuilder(swApp,myModel, qty,spacing, coordSystem, axis);
-
+            Model = new SolidworksModel();
+            Model.SwModelObject = CreateNewPart(swApp);
+            SketchBuilder = new SketchBuilder(Model);
+            StationBuilder = new StationBuilder(swApp, Model, qty, spacing, coordSystem, axis);
         }
-        public SldWorks.PartDoc createNewPart(SldWorks.SldWorks swApp)
+
+        public SldWorks.PartDoc CreateNewPart(SldWorks.SldWorks swApp)
         {
-            int errors = 0, warnings = 0;
-
-            SldWorks.PartDoc swModel = null;
-
-            //  Fetch the default template path from the system settings
             string partTemplate = swApp.GetUserPreferenceStringValue((int)swUserPreferenceStringValue_e.swDefaultTemplatePart);
 
-
-            if (partTemplate != null)
+            if (!string.IsNullOrEmpty(partTemplate))
             {
                 object model = swApp.NewDocument(partTemplate, 0, 0, 0);
                 if (model == null)
@@ -42,25 +27,20 @@ namespace SolidworksLibrary
                 }
                 else
                 {
-                    Console.WriteLine("Created part document successfully.");
-                    swModel = (SldWorks.PartDoc)model;
-
+                    return (SldWorks.PartDoc)model;
                 }
             }
 
-            return swModel;
-
+            return null;
         }
 
-        public string getPartTemplate(SldWorks.SldWorks swApp)
+        public string GetPartTemplate(SldWorks.SldWorks swApp)
         {
             return swApp.GetUserPreferenceStringValue((int)swUserPreferenceStringValue_e.swDefaultTemplatePart);
         }
 
-        public SW_Model myModel { get; set; }
-        public StationBuilder myStationBuilder { get; set; }
-        public SketchBuilder mySketchBuilder { get; set; }
-
+        public SolidworksModel Model { get; private set; }
+        public StationBuilder StationBuilder { get; private set; }
+        public SketchBuilder SketchBuilder { get; private set; }
     }
 }
-

@@ -1,22 +1,17 @@
-﻿using CAD;
+using CAD;
 using Mathematics;
-using SolidWorks;
-using SwConst;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using static CAD.CAD_Model;
 
 namespace SolidworksLibrary
 {
-    internal class SW_Model
+    /// <summary>
+    /// Wraps a SolidWorks model document (PartDoc or AssemblyDoc) and its
+    /// associated CAD metadata.
+    /// </summary>
+    internal class SolidworksModel
     {
-
         // -----------------------------
-        // Enums 
+        // Enums
         // -----------------------------
         public enum ModelTypeEnum
         {
@@ -31,15 +26,17 @@ namespace SolidworksLibrary
         // -----------------------------
         public CAD_Model MyCADModel { get; set; }
         public CoordinateSystem Origin { get; set; }
-        public object SwModelObject { get; set; }
-        
-        public SW_Model() {
 
+        /// <summary>
+        /// The underlying SolidWorks COM object. Holds a <c>PartDoc</c> or <c>AssemblyDoc</c>.
+        /// </summary>
+        public object SwModelObject { get; set; }
+
+        public SolidworksModel()
+        {
             MyCADModel = new CAD_Model();
             Origin = new CoordinateSystem();
-            MyCADModel.CAD_AppName = CAD_AppEnum.Solidworks;
+            MyCADModel.CAD_AppName = CAD_Model.CAD_AppEnum.Solidworks;
         }
-
-        
     }
 }
