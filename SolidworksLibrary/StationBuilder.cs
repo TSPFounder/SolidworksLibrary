@@ -7,7 +7,7 @@ using SwConst;
 
 namespace SolidworksLibrary
 {
-    internal class StationBuilder
+    public class StationBuilder
     {
         public enum CoordinateSystemType
         {
@@ -68,7 +68,7 @@ namespace SolidworksLibrary
             }
         }
 
-        private CAD_Station.StationTypeEnum GetStationType()
+        public CAD_Station.StationTypeEnum GetStationType()
         {
             switch (CoordSystem)
             {
@@ -91,7 +91,7 @@ namespace SolidworksLibrary
             }
         }
 
-        private CAD_SketchPlane.GeometryTypeEnum GetGeometryType()
+        public CAD_SketchPlane.GeometryTypeEnum GetGeometryType()
         {
             switch (CoordSystem)
             {
@@ -106,7 +106,7 @@ namespace SolidworksLibrary
             }
         }
 
-        private double[] CalculatePosition(double offset)
+        public double[] CalculatePosition(double offset)
         {
             double[] position = new double[3];
 
@@ -305,7 +305,7 @@ namespace SolidworksLibrary
         {
             swModel.ClearSelection2(true);
 
-            string planeName = sketchPlane.Path ?? sketchPlane.Name;
+            string planeName = sketchPlane.Path + sketchPlane.Name;
             ModelDocExtension swExt = swModel.Extension;
 
             swExt.SelectByID2(planeName, "PLANE", position[0], position[1], position[2],
@@ -331,7 +331,7 @@ namespace SolidworksLibrary
 
         private void CreateSketchOnPlane(ModelDoc2 swModel, CAD_SketchPlane sketchPlane, int index)
         {
-            Feature planeFeat = FindFeatureByName(swModel, sketchPlane.Path ?? sketchPlane.Name);
+            Feature planeFeat = FindFeatureByName(swModel, sketchPlane.Path + sketchPlane.Name);
             if (planeFeat != null)
             {
                 planeFeat.Select2(false, 0);

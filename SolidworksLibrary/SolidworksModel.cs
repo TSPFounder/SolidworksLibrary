@@ -8,7 +8,7 @@ namespace SolidworksLibrary
     /// Wraps a SolidWorks model document (PartDoc or AssemblyDoc) and its
     /// associated CAD metadata.
     /// </summary>
-    internal class SolidworksModel
+    public class SolidworksModel
     {
         // -----------------------------
         // Enums
@@ -26,6 +26,7 @@ namespace SolidworksLibrary
         // -----------------------------
         public CAD_Model MyCADModel { get; set; }
         public CoordinateSystem Origin { get; set; }
+        public ModelTypeEnum Type { get; set; }
 
         /// <summary>
         /// The underlying SolidWorks COM object. Holds a <c>PartDoc</c> or <c>AssemblyDoc</c>.

@@ -18,15 +18,15 @@ namespace SolidworksLibrary
             _featureManager = modelDoc.FeatureManager ?? throw new InvalidOperationException("FeatureManager is required for reference geometry.");
         }
 
-        public void StartSketch(string targetPlane = "Front Plane")
+        public static void StartSketch(ModelDoc2 modelDoc, SketchManager sketchManager, string targetPlane = "Front Plane")
         {
-            _modelDoc.ClearSelection2(true);
+            modelDoc.ClearSelection2(true);
             if (!string.IsNullOrWhiteSpace(targetPlane))
             {
-                _modelDoc.Extension.SelectByID2(targetPlane, "PLANE", 0, 0, 0, false, 0, null, 0);
+                modelDoc.Extension.SelectByID2(targetPlane, "PLANE", 0, 0, 0, false, 0, null, 0);
             }
 
-            _sketchManager.InsertSketch(true);
+            sketchManager.InsertSketch(true);
         }
 
         public void EndSketch()

@@ -5,7 +5,7 @@ using SwConst;
 
 namespace SolidworksLibrary
 {
-    internal class FeatureBuilder : CAD_Feature
+    internal class FeatureBuilder //: CAD_Feature
     {
         private readonly ModelDoc2 _modelDoc;
         private readonly FeatureManager _featureManager;
@@ -23,7 +23,7 @@ namespace SolidworksLibrary
         // Extrusion (Boss)
         // -------------------------------------------
 
-        public override object CreateExtrusion(bool singleDirection, bool flipDirection,
+        public  object CreateExtrusion(bool singleDirection, bool flipDirection,
             int endCondition1, double depth1,
             int endCondition2, double depth2,
             bool draftWhileExtruding1, double draftAngle1,
@@ -46,7 +46,7 @@ namespace SolidworksLibrary
         // Cut Extrusion
         // -------------------------------------------
 
-        public override object CreateCutExtrusion(bool singleDirection, bool flipDirection,
+        public  object CreateCutExtrusion(bool singleDirection, bool flipDirection,
             int endCondition1, double depth1,
             int endCondition2, double depth2,
             bool draftWhileExtruding1, double draftAngle1,
@@ -70,7 +70,7 @@ namespace SolidworksLibrary
         // Revolve
         // -------------------------------------------
 
-        public override object CreateRevolve(bool singleDirection, bool isSolid,
+        public  object CreateRevolve(bool singleDirection, bool isSolid,
             bool isCut, bool reverseDirection,
             int endCondition1, double angle1,
             int endCondition2, double angle2,
@@ -91,7 +91,7 @@ namespace SolidworksLibrary
         // Hole Wizard (Threaded Holes)
         // -------------------------------------------
 
-        public override object CreateHoleWizard(int holeType, int standard,
+        public  object CreateHoleWizard(int holeType, int standard,
             int fastenerType, string size, short endCondition,
             double diameter, double depth,
             double headClearance, double headDiameter,
@@ -108,7 +108,7 @@ namespace SolidworksLibrary
                 "", false, false, false, false, false, false);
         }
 
-        public override object CreateThreadedHole(string size, double depth,
+        public  object CreateThreadedHole(string size, double depth,
             double threadDepth, int standard, int fastenerType)
         {
             return FeatMgr.HoleWizard5(
@@ -123,7 +123,7 @@ namespace SolidworksLibrary
                 "", false, false, false, false, false, false);
         }
 
-        public override object CreateCounterboreHole(string size, double depth,
+        public  object CreateCounterboreHole(string size, double depth,
             double cboreDiameter, double cboreDepth,
             int standard, int fastenerType)
         {
@@ -139,7 +139,7 @@ namespace SolidworksLibrary
                 "", false, false, false, false, false, false);
         }
 
-        public override object CreateCountersinkHole(string size, double depth,
+        public  object CreateCountersinkHole(string size, double depth,
             double csinkDiameter, double csinkAngle,
             int standard, int fastenerType)
         {
@@ -159,7 +159,7 @@ namespace SolidworksLibrary
         // Chamfer
         // -------------------------------------------
 
-        public override void CreateChamfer(double width, double angle, bool flipDirection)
+        public  void CreateChamfer(double width, double angle, bool flipDirection)
         {
             SwModelDoc.FeatureChamfer(width, angle, flipDirection);
         }
@@ -168,7 +168,7 @@ namespace SolidworksLibrary
         // Fillet
         // -------------------------------------------
 
-        public override bool CreateFillet(double radius, int filletType,
+        public  bool CreateFillet(double radius, int filletType,
             int overflowType, int radiusType,
             bool propagateToTangentFaces)
         {
@@ -177,7 +177,7 @@ namespace SolidworksLibrary
             return result == 0;
         }
 
-        public override bool CreateConstantRadiusFillet(double radius,
+        public  bool CreateConstantRadiusFillet(double radius,
             bool propagateToTangentFaces)
         {
             int result = SwModelDoc.FeatureFillet2(radius, true,
@@ -189,7 +189,7 @@ namespace SolidworksLibrary
         // Shell
         // -------------------------------------------
 
-        public override void CreateShell(double thickness, bool shellOutward)
+        public  void CreateShell(double thickness, bool shellOutward)
         {
             SwModelDoc.InsertFeatureShell(thickness, shellOutward);
         }
@@ -198,7 +198,7 @@ namespace SolidworksLibrary
         // Draft
         // -------------------------------------------
 
-        public override object CreateDraft(double angle, bool reverseDirection, int draftType)
+        public  object CreateDraft(double angle, bool reverseDirection, int draftType)
         {
             // Requires selected faces and neutral plane before calling
             DraftFeatureData draftData = (DraftFeatureData)FeatMgr.CreateDefinition(
@@ -213,7 +213,7 @@ namespace SolidworksLibrary
         // Linear Pattern
         // -------------------------------------------
 
-        public override object CreateLinearPattern(int numDir1, double spacingDir1,
+        public  object CreateLinearPattern(int numDir1, double spacingDir1,
             int numDir2, double spacingDir2,
             bool reverseDir1, bool reverseDir2,
             bool geometryPattern, bool varySketch,
@@ -235,7 +235,7 @@ namespace SolidworksLibrary
         // Circular Pattern
         // -------------------------------------------
 
-        public override object CreateCircularPattern(int totalInstances, double angularSpacing,
+        public  object CreateCircularPattern(int totalInstances, double angularSpacing,
             bool reverseDirection, bool geometryPattern,
             bool equalSpacing, bool varySketch,
             string skipInstances)
@@ -250,7 +250,7 @@ namespace SolidworksLibrary
         // Mirror
         // -------------------------------------------
 
-        public override object CreateMirrorFeature(bool geometryPattern, bool propagateVisualProps)
+        public  object CreateMirrorFeature(bool geometryPattern, bool propagateVisualProps)
         {
             return FeatMgr.InsertMirrorFeature2(
                 geometryPattern, false, propagateVisualProps, false, 0);
@@ -260,7 +260,7 @@ namespace SolidworksLibrary
         // Rib
         // -------------------------------------------
 
-        public override void CreateRib(double thickness, int ribType, bool flipMaterial,
+        public  void CreateRib(double thickness, int ribType, bool flipMaterial,
             bool reverseThickness, bool naturalDraft, double draftAngle)
         {
             FeatMgr.InsertRib(
@@ -272,7 +272,7 @@ namespace SolidworksLibrary
         // Slot (Cut)
         // -------------------------------------------
 
-        public override object CreateSlotCut(double depth,
+        public  object CreateSlotCut(double depth,
             bool singleDirection, bool flipDirection)
         {
             return FeatMgr.FeatureCut4(
@@ -291,7 +291,7 @@ namespace SolidworksLibrary
         // Joint
         // -------------------------------------------
 
-        public override object CreateJoint(int jointType, double clearance,
+        public  object CreateJoint(int jointType, double clearance,
             bool flipDirection)
         {
             // Creates a joint using a structural member or weldment feature
@@ -312,7 +312,7 @@ namespace SolidworksLibrary
         // Bead (Weldment)
         // -------------------------------------------
 
-        public override object CreateBead(double beadWidth, double beadHeight,
+        public  object CreateBead(double beadWidth, double beadHeight,
             int beadType, bool flipDirection)
         {
             // Creates a weldment bead feature using fillet weld approach
@@ -333,7 +333,7 @@ namespace SolidworksLibrary
         // Keyway
         // -------------------------------------------
 
-        public override object CreateKeyway(double width, double depth,
+        public  object CreateKeyway(double width, double depth,
             double length, int keywayType, bool flipDirection)
         {
             // Creates a keyway cut feature using a blind cut extrusion
@@ -354,7 +354,7 @@ namespace SolidworksLibrary
         // Leg
         // -------------------------------------------
 
-        public override object CreateLeg(double height, double width,
+        public  object CreateLeg(double height, double width,
             double thickness, int legType)
         {
             // Creates a leg feature as an extruded boss
@@ -374,7 +374,7 @@ namespace SolidworksLibrary
         // Arm
         // -------------------------------------------
 
-        public override object CreateArm(double length, double width,
+        public  object CreateArm(double length, double width,
             double thickness, int armType)
         {
             // Creates an arm feature as an extruded boss
@@ -394,7 +394,7 @@ namespace SolidworksLibrary
         // Embossment
         // -------------------------------------------
 
-        public override object CreateEmbossment(double depth, double taperAngle,
+        public  object CreateEmbossment(double depth, double taperAngle,
             bool flipDirection, int embossType)
         {
             // Creates an embossment/deboss feature
@@ -414,7 +414,7 @@ namespace SolidworksLibrary
         // Gusset
         // -------------------------------------------
 
-        public override object CreateGusset(double thickness, double height,
+        public  object CreateGusset(double thickness, double height,
             double width, int gussetType, bool flipDirection)
         {
             // Creates a gusset feature as an extruded triangular profile
@@ -434,7 +434,7 @@ namespace SolidworksLibrary
         // Web
         // -------------------------------------------
 
-        public override object CreateWeb(double thickness, double height,
+        public  object CreateWeb(double thickness, double height,
             int webType, bool flipDirection)
         {
             // Creates a web/rib feature for structural support
@@ -449,7 +449,7 @@ namespace SolidworksLibrary
         // Tab (Sheet Metal)
         // -------------------------------------------
 
-        public override object CreateTab(double length, double width,
+        public  object CreateTab(double length, double width,
             double thickness, int tabType, bool flipDirection)
         {
             // Creates a tab feature as an extruded boss
@@ -469,7 +469,7 @@ namespace SolidworksLibrary
         // Coil / Spring
         // -------------------------------------------
 
-        public override object CreateCoil(double pitch, double diameter,
+        public  object CreateCoil(double pitch, double diameter,
             double height, int numCoils, bool clockwise,
             int coilType, double wireDiameter)
         {
@@ -492,7 +492,7 @@ namespace SolidworksLibrary
         // Helicoil / Thread Insert
         // -------------------------------------------
 
-        public override object CreateHelicoil(double pitch, double diameter,
+        public  object CreateHelicoil(double pitch, double diameter,
             double depth, int numTurns, bool clockwise,
             int threadType)
         {
@@ -514,7 +514,7 @@ namespace SolidworksLibrary
         // Sweep
         // -------------------------------------------
 
-        public override object CreateSweep(bool isSolid, bool isCut,
+        public object CreateSweep(bool isSolid, bool isCut,
             bool isThinFeature, double thinWallThickness,
             bool merge, bool useFeatScope, bool useAutoSelect,
             int startTangentType, int endTangentType,
@@ -538,7 +538,7 @@ namespace SolidworksLibrary
         // Loft
         // -------------------------------------------
 
-        public override object CreateLoft(bool isSolid, bool isCut,
+        public  object CreateLoft(bool isSolid, bool isCut,
             bool isThinFeature, double thinWallThickness,
             bool merge, bool useFeatScope, bool useAutoSelect,
             int startTangentType, int endTangentType,
@@ -584,7 +584,7 @@ namespace SolidworksLibrary
         // Other Pattern (Table-Driven / Sketch-Driven)
         // -------------------------------------------
 
-        public override object CreateOtherPattern(int patternType,
+        public  object CreateOtherPattern(int patternType,
             object patternParameters, bool geometryPattern)
         {
             // Creates a sketch-driven pattern
@@ -599,7 +599,7 @@ namespace SolidworksLibrary
         // Rounded Slot
         // -------------------------------------------
 
-        public override object CreateRoundedSlot(double length, double width,
+        public  object CreateRoundedSlot(double length, double width,
             double depth, bool singleDirection, bool flipDirection)
         {
             // Creates a rounded slot (obround) cut feature
@@ -620,7 +620,7 @@ namespace SolidworksLibrary
         // Square Slot
         // -------------------------------------------
 
-        public override object CreateSquareSlot(double length, double width,
+        public  object CreateSquareSlot(double length, double width,
             double depth, bool singleDirection, bool flipDirection)
         {
             // Creates a square/rectangular slot cut feature

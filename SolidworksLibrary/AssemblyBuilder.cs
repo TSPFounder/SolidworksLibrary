@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
-using CAD;
-using Mathematics;
 using SldWorks;
 using SwConst;
+using CAD;
+using Mathematics;
 
 namespace SolidworksLibrary
 {
-    internal class AssemblyBuilder : CAD_Assembly
+    internal class AssemblyBuilder 
     {
         private readonly SldWorks.SldWorks _swApp;
         private AssemblyDoc _assemblyDoc;
         private ModelDoc2 _modelDoc;
+        private CAD_Assembly _myCAD_Assy;
 
         // -------------------------------------------
         // Constructor
         // -------------------------------------------
-
+        public AssemblyBuilder(SldWorks.SldWorks swApp) { 
+            _swApp = swApp ?? throw new ArgumentNullException(nameof(swApp));
+            _myCAD_Assy = new CAD_Assembly();
+            CreateAssemblyDocument();
+        }
         public AssemblyBuilder(SldWorks.SldWorks swApp, CoordinateSystem coordinateSystem,
             SolidworksModel basePart, SolidworksModel otherPart)
         {
@@ -25,18 +30,23 @@ namespace SolidworksLibrary
             if (basePart == null) throw new ArgumentNullException(nameof(basePart));
             if (otherPart == null) throw new ArgumentNullException(nameof(otherPart));
 
-            // Set the assembly's coordinate system
-            CurrentCS = coordinateSystem ?? new CoordinateSystem();
-            AddCoordinateSystem(CurrentCS);
+            _myCAD_Assy = new CAD_Assembly();
+            
 
             // Create the assembly document
             CreateAssemblyDocument();
+
+            // Set the assembly's coordinate system
+            CoordinateSystem CurrentCS = coordinateSystem ?? new CoordinateSystem();
+            _myCAD_Assy.AddCoordinateSystem(CurrentCS);
+
+            
 
             // Add the base part (fixed at origin)
             var baseComponent = InsertComponent(basePart, true, 0, 0, 0);
             if (baseComponent != null)
             {
-                AddComponent(baseComponent);
+                //AddComponent(baseComponent);
             }
 
             // Add the other part (positioned relative to coordinate system)
@@ -47,7 +57,7 @@ namespace SolidworksLibrary
             var otherComponent = InsertComponent(otherPart, false, offsetX, offsetY, offsetZ);
             if (otherComponent != null)
             {
-                AddComponent(otherComponent);
+                //AddComponent(otherComponent);
             }
         }
 
@@ -129,7 +139,7 @@ namespace SolidworksLibrary
                 Name = swComponent.Name2,
                 Path = partPath,
                 IsAssembly = false,
-                MyPart = partModel.MyCADModel?.CurrentPart
+                //MyPart = (CAD_Part)partModel.MyCADModel?.CurrentPart
             };
 
             return cadComponent;

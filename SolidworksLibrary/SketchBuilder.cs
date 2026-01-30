@@ -5,7 +5,7 @@ using SwConst;
 
 namespace SolidworksLibrary
 {
-    internal class SketchBuilder
+    public class SketchBuilder
     {
         public ModelDoc2 SwModelDoc { get; set; }
         public SolidworksModel MyModel { get; set; }

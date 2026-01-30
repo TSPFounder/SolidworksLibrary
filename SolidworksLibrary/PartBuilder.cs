@@ -1,11 +1,10 @@
-using CAD;
 using SwConst;
 using System;
 using System.Collections.Generic;
 
 namespace SolidworksLibrary
 {
-    internal class PartBuilder
+    public class PartBuilder
     {
         public PartBuilder(SldWorks.SldWorks swApp, int qty, double spacing,
             StationBuilder.CoordinateSystemType coordSystem, int axis)
@@ -18,7 +17,7 @@ namespace SolidworksLibrary
             StationBuilder.Build();
 
             StationSketchBuilders = new List<SketchBuilder>(StationBuilder.Stations.Count);
-            foreach (CAD_Station station in StationBuilder.Stations)
+            foreach (var station in StationBuilder.Stations)
             {
                 string planeName = station.CurrentSketchPlane?.Path ?? station.CurrentSketchPlane?.Name;
                 if (!string.IsNullOrEmpty(planeName))
@@ -32,7 +31,7 @@ namespace SolidworksLibrary
         // Part Creation
         // -------------------------------------------
 
-        public SldWorks.PartDoc CreateNewPart(SldWorks.SldWorks swApp)
+        public static SldWorks.PartDoc CreateNewPart(SldWorks.SldWorks swApp)
         {
             string partTemplate = swApp.GetUserPreferenceStringValue(
                 (int)swUserPreferenceStringValue_e.swDefaultTemplatePart);
@@ -84,12 +83,12 @@ namespace SolidworksLibrary
         /// <summary>
         /// Default sketch builder targeting the base plane ("Front Plane").
         /// </summary>
-        public SketchBuilder SketchBuilder { get; private set; }
+        public SketchBuilder SketchBuilder { get;  set; }
 
         /// <summary>
         /// One <see cref="SketchBuilder"/> per station, each targeting
         /// that station's offset plane.
         /// </summary>
-        public List<SketchBuilder> StationSketchBuilders { get; private set; }
+        public List<SketchBuilder> StationSketchBuilders { get;  set; }
     }
 }

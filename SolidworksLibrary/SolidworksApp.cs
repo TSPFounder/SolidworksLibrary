@@ -1,16 +1,21 @@
 using System;
 using System.Runtime.InteropServices;
 using SldWorks;
+using CAD;
 
 namespace SolidworksLibrary
 {
     public class SolidworksApp
     {
         public SldWorks.SldWorks SwApp { get; private set; }
+        public SolidworksModel currentSw_Model { get; private set; } = new SolidworksModel();
+        public SldWorks.AssemblyDoc currentAssyDoc { get; private set; }
+        public SldWorks.ModelDoc2 currentModel2Doc { get; private set; }
 
         private SolidworksApp(SldWorks.SldWorks swApp)
         {
-            SwApp = swApp ?? throw new ArgumentNullException(nameof(swApp));
+            SwApp = swApp; //  throw new ArgumentNullException(nameof(swApp));
+            currentSw_Model= new SolidworksModel();
         }
 
         public static SolidworksApp Connect()
@@ -20,6 +25,7 @@ namespace SolidworksLibrary
             try
             {
                 swApp = (SldWorks.SldWorks)Marshal.GetActiveObject("SldWorks.Application");
+                SldWorks.ModelDoc2 currentModel2Doc = (SldWorks.ModelDoc2)swApp.ActiveDoc;
             }
             catch
             {
@@ -29,5 +35,11 @@ namespace SolidworksLibrary
 
             return new SolidworksApp(swApp);
         }
+        
+         public void createModel() {
+            currentSw_Model = new SolidworksModel();
+            currentSw_Model.SwModelObject = SwApp.ActiveDoc;
+        }
+       
     }
 }
