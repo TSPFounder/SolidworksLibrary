@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using SldWorks;
 using CAD;
+using SolidworksLibrary.Automation;
 
 namespace SolidworksLibrary
 {
@@ -36,9 +37,19 @@ namespace SolidworksLibrary
             return new SolidworksApp(swApp);
         }
         
-         public void createModel() {
+        public void createModel() {
             currentSw_Model = new SolidworksModel();
             currentSw_Model.SwModelObject = SwApp.ActiveDoc;
+        }
+
+        public CadAutomationBridge CreateAutomationBridge(
+            ISimulationAdapter simulationAdapter,
+            IParameterMapper parameterMapper = null,
+            ICadParameterSink parameterSink = null)
+        {
+            var mapper = parameterMapper ?? new ParameterMappingProfile();
+            var sink = parameterSink ?? new SolidworksParameterSink();
+            return new CadAutomationBridge(this, simulationAdapter, mapper, sink);
         }
        
     }
