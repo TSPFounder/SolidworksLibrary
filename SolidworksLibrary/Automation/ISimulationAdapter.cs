@@ -1,0 +1,8 @@
+namespace SolidworksLibrary.Automation
+{
+    public interface ISimulationAdapter
+    {
+        string AdapterName { get; }
+        SimulationModelSnapshot CaptureSnapshot(SimulationCaptureRequest request);
+    }
+}
