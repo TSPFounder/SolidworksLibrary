@@ -682,8 +682,23 @@ namespace SolidworksLibrary
                 return true;
             }
 
-            componentName = alias;
-            return true;
+            // If not mapped, check whether the alias directly matches an existing component name
+            object[] components = (object[])_assemblyDoc.GetComponents(true);
+            if (components != null)
+            {
+                foreach (object obj in components)
+                {
+                    Component2 comp = (Component2)obj;
+                    if (comp.Name2.Equals(alias, StringComparison.OrdinalIgnoreCase))
+                    {
+                        componentName = alias;
+                        return true;
+                    }
+                }
+            }
+
+            // Alias could not be resolved to a mapped or existing component name
+            return false;
         }
 
         // -------------------------------------------
