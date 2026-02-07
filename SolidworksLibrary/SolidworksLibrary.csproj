@@ -74,6 +74,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automation\BridgeSyncOptions.cs" />
+    <Compile Include="Automation\BridgeSyncResult.cs" />
+    <Compile Include="Automation\CadAutomationBridge.cs" />
+    <Compile Include="Automation\ICadParameterSink.cs" />
+    <Compile Include="Automation\ISimulationAdapter.cs" />
+    <Compile Include="Automation\MatlabSimulinkSimscapeAdapter.cs" />
+    <Compile Include="Automation\MatlabAssemblyRequest.cs" />
+    <Compile Include="Automation\MatlabAssemblyRequestFile.cs" />
+    <Compile Include="Automation\MatlabAssemblyScriptExporter.cs" />
+    <Compile Include="Automation\ParameterMappingProfile.cs" />
+    <Compile Include="Automation\SimulationCaptureRequest.cs" />
+    <Compile Include="Automation\SimulationDomain.cs" />
+    <Compile Include="Automation\SimulationModelSnapshot.cs" />
+    <Compile Include="Automation\SimulationParameter.cs" />
+    <Compile Include="Automation\SolidworksParameterSink.cs" />
     <Compile Include="AssemblyBuilder.cs" />
     <Compile Include="ConstructionBuilder.cs" />
     <Compile Include="DrawingBuilder.cs" />

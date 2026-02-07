@@ -39,5 +39,27 @@ namespace SolidworksLibrary
             Origin = new CoordinateSystem();
             MyCADModel.CAD_AppName = CAD_Model.CAD_AppEnum.Solidworks;
         }
+
+        public CAD_Part GetOrCreateTargetPart(string targetName = null)
+        {
+            if (MyCADModel.CurrentPart != null)
+            {
+                return MyCADModel.CurrentPart;
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetName))
+            {
+                var existing = MyCADModel.MyParts.Find(part => string.Equals(part.Name, targetName, StringComparison.OrdinalIgnoreCase));
+                if (existing != null)
+                {
+                    MyCADModel.CurrentPart = existing;
+                    return existing;
+                }
+            }
+
+            var part = new CAD_Part { Name = string.IsNullOrWhiteSpace(targetName) ? "PrimaryPart" : targetName };
+            MyCADModel.AddPart(part);
+            return part;
+        }
     }
 }

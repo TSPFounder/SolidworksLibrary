@@ -4,6 +4,8 @@ using SldWorks;
 using SwConst;
 using CAD;
 using Mathematics;
+using SolidworksLibrary.Automation;
+using System.IO;
 
 namespace SolidworksLibrary
 {
@@ -13,6 +15,7 @@ namespace SolidworksLibrary
         private AssemblyDoc _assemblyDoc;
         private ModelDoc2 _modelDoc;
         private CAD_Assembly _myCAD_Assy;
+        private readonly Dictionary<string, string> _componentAliasToName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         // -------------------------------------------
         // Constructor
@@ -145,6 +148,18 @@ namespace SolidworksLibrary
             return cadComponent;
         }
 
+        public CAD_Component InsertComponent(string alias, SolidworksModel partModel, bool fixedPosition,
+            double x, double y, double z)
+        {
+            var component = InsertComponent(partModel, fixedPosition, x, y, z);
+            if (component != null && !string.IsNullOrWhiteSpace(alias))
+            {
+                _componentAliasToName[alias] = component.Name;
+            }
+
+            return component;
+        }
+
         // -------------------------------------------
         // Component Insertion with Transform
         // -------------------------------------------
@@ -169,6 +184,87 @@ namespace SolidworksLibrary
             }
 
             return component;
+        }
+
+        public BridgeSyncResult BuildFromMatlabRequest(MatlabAssemblyRequest request, IDictionary<string, SolidworksModel> modelByAlias)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (modelByAlias == null) throw new ArgumentNullException(nameof(modelByAlias));
+
+            var result = new BridgeSyncResult();
+            if (!request.IsValid(out var reason))
+            {
+                result.Warnings.Add(reason);
+                return result;
+            }
+
+            _componentAliasToName.Clear();
+
+            foreach (var component in request.Components)
+            {
+                if (!modelByAlias.TryGetValue(component.Alias, out var model) || model == null)
+                {
+                    result.Warnings.Add($"No model found for alias '{component.Alias}'.");
+                    result.ParametersSkipped++;
+                    continue;
+                }
+
+                var created = InsertComponent(component.Alias, model, component.IsFixed, component.X, component.Y, component.Z);
+                if (created == null)
+                {
+                    result.Warnings.Add($"Failed to insert alias '{component.Alias}'.");
+                    result.ParametersSkipped++;
+                }
+                else
+                {
+                    result.ParametersApplied++;
+                }
+            }
+
+            foreach (var mate in request.Mates)
+            {
+                if (!TryResolveAlias(mate.Component1Alias, out var comp1) || !TryResolveAlias(mate.Component2Alias, out var comp2))
+                {
+                    result.Warnings.Add($"Cannot resolve mate aliases '{mate.Component1Alias}' and '{mate.Component2Alias}'.");
+                    result.ParametersSkipped++;
+                    continue;
+                }
+
+                if (CreateComponentMate(comp1, comp2, mate.MateType, mate.Alignment, mate.Value))
+                {
+                    result.ParametersUpdated++;
+                }
+                else
+                {
+                    result.Warnings.Add($"Failed to create mate {mate.MateType} between '{comp1}' and '{comp2}'.");
+                    result.ParametersSkipped++;
+                }
+            }
+
+            return result;
+        }
+
+        public BridgeSyncResult BuildFromMatlabRequestFile(string requestFilePath, IDictionary<string, SolidworksModel> modelByAlias)
+        {
+            var request = MatlabAssemblyRequestFile.Load(requestFilePath);
+            return BuildFromMatlabRequest(request, modelByAlias);
+        }
+
+        public void WriteMatlabRequestTemplate(string requestFilePath)
+        {
+            MatlabAssemblyRequestFile.SaveTemplate(requestFilePath);
+        }
+
+        public void ExportMatlabGuiTemplateScript(string scriptFilePath)
+        {
+            MatlabAssemblyScriptExporter.WriteTemplateScript(scriptFilePath);
+        }
+
+        public void ExportAssemblySummaryForMatlab(string filePath)
+        {
+            var lines = new List<string> { "ComponentName" };
+            lines.AddRange(GetComponentNames());
+            File.WriteAllLines(filePath, lines);
         }
 
         // -------------------------------------------
@@ -527,6 +623,21 @@ namespace SolidworksLibrary
             }
 
             return null;
+        }
+
+        private bool TryResolveAlias(string alias, out string componentName)
+        {
+            componentName = null;
+            if (string.IsNullOrWhiteSpace(alias)) return false;
+
+            if (_componentAliasToName.TryGetValue(alias, out var mapped) && !string.IsNullOrWhiteSpace(mapped))
+            {
+                componentName = mapped;
+                return true;
+            }
+
+            componentName = alias;
+            return true;
         }
 
         // -------------------------------------------
