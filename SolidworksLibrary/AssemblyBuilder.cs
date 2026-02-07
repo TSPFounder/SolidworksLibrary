@@ -6,6 +6,7 @@ using CAD;
 using Mathematics;
 using SolidworksLibrary.Automation;
 using System.IO;
+using System.Web.Script.Serialization;
 
 namespace SolidworksLibrary
 {
@@ -145,6 +146,7 @@ namespace SolidworksLibrary
                 //MyPart = (CAD_Part)partModel.MyCADModel?.CurrentPart
             };
 
+            _myCAD_Assy.AddComponent(cadComponent);
             return cadComponent;
         }
 
@@ -265,6 +267,50 @@ namespace SolidworksLibrary
             var lines = new List<string> { "ComponentName" };
             lines.AddRange(GetComponentNames());
             File.WriteAllLines(filePath, lines);
+        }
+
+        public string ExportCadAssemblyJson()
+        {
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(CadAssemblyJsonModel.FromCadAssembly(_myCAD_Assy));
+        }
+
+        public void ExportCadAssemblyJsonFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path is required.", nameof(filePath));
+            File.WriteAllText(filePath, ExportCadAssemblyJson());
+        }
+
+        public CAD_Assembly ImportCadAssemblyJson(string json, bool replaceCurrent = true)
+        {
+            if (string.IsNullOrWhiteSpace(json)) throw new ArgumentException("JSON payload is required.", nameof(json));
+
+            var serializer = new JavaScriptSerializer();
+            var model = serializer.Deserialize<CadAssemblyJsonModel>(json);
+            if (model == null) throw new InvalidOperationException("Unable to deserialize CAD assembly JSON payload.");
+
+            var importedAssembly = model.ToCadAssembly();
+            if (replaceCurrent)
+            {
+                _myCAD_Assy = importedAssembly;
+                _componentAliasToName.Clear();
+                foreach (var component in _myCAD_Assy.MyComponents)
+                {
+                    if (!string.IsNullOrWhiteSpace(component?.Name))
+                    {
+                        _componentAliasToName[component.Name] = component.Name;
+                    }
+                }
+            }
+
+            return importedAssembly;
+        }
+
+        public CAD_Assembly ImportCadAssemblyJsonFile(string filePath, bool replaceCurrent = true)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path is required.", nameof(filePath));
+            if (!File.Exists(filePath)) throw new FileNotFoundException("CAD assembly JSON file not found.", filePath);
+            return ImportCadAssemblyJson(File.ReadAllText(filePath), replaceCurrent);
         }
 
         // -------------------------------------------
@@ -744,6 +790,77 @@ namespace SolidworksLibrary
         public void ZoomToFit()
         {
             _modelDoc.ViewZoomtofit2();
+        }
+
+        private sealed class CadAssemblyJsonModel
+        {
+            public string Name { get; set; }
+            public string Version { get; set; }
+            public string Description { get; set; }
+            public List<CadComponentJsonModel> Components { get; set; } = new List<CadComponentJsonModel>();
+
+            public static CadAssemblyJsonModel FromCadAssembly(CAD_Assembly assembly)
+            {
+                var model = new CadAssemblyJsonModel();
+                if (assembly == null)
+                {
+                    return model;
+                }
+
+                model.Name = assembly.Name;
+                model.Version = assembly.Version;
+                model.Description = assembly.Description;
+
+                foreach (var component in assembly.MyComponents)
+                {
+                    model.Components.Add(new CadComponentJsonModel
+                    {
+                        Name = component?.Name,
+                        Version = component?.Version,
+                        Path = component?.Path,
+                        IsAssembly = component?.IsAssembly ?? false,
+                        IsConfigurationItem = component?.IsConfigurationItem ?? false
+                    });
+                }
+
+                return model;
+            }
+
+            public CAD_Assembly ToCadAssembly()
+            {
+                var assembly = new CAD_Assembly
+                {
+                    Name = Name,
+                    Version = Version,
+                    Description = Description
+                };
+
+                if (Components != null)
+                {
+                    foreach (var component in Components)
+                    {
+                        assembly.AddComponent(new CAD_Component
+                        {
+                            Name = component?.Name,
+                            Version = component?.Version,
+                            Path = component?.Path,
+                            IsAssembly = component?.IsAssembly ?? false,
+                            IsConfigurationItem = component?.IsConfigurationItem ?? false
+                        });
+                    }
+                }
+
+                return assembly;
+            }
+        }
+
+        private sealed class CadComponentJsonModel
+        {
+            public string Name { get; set; }
+            public string Version { get; set; }
+            public string Path { get; set; }
+            public bool IsAssembly { get; set; }
+            public bool IsConfigurationItem { get; set; }
         }
     }
 }
