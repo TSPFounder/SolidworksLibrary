@@ -29,7 +29,7 @@ namespace SolidworksLibrary.Automation
                 {
                     if (options.OverwriteExisting)
                     {
-                        existing.Value = parameter.Value;
+                        existing.Value = new CAD_ParameterValue(existing, parameter.Value);
                         existing.MyParameterType = parameter.MyParameterType;
                         existing.Description = parameter.Description ?? existing.Description;
                         result.ParametersUpdated++;
