@@ -44,7 +44,13 @@ namespace SolidworksLibrary
         {
             if (MyCADModel.CurrentPart != null)
             {
-                return MyCADModel.CurrentPart;
+                // Only reuse the current part if no specific target name is requested,
+                // or if the requested name matches the current part (case-insensitive).
+                if (string.IsNullOrWhiteSpace(targetName) ||
+                    string.Equals(MyCADModel.CurrentPart.Name, targetName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return MyCADModel.CurrentPart;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(targetName))
