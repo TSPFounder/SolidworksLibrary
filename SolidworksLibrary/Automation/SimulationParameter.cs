@@ -40,7 +40,6 @@ namespace SolidworksLibrary.Automation
             else
             {
                 parameter.Value = new CAD_ParameterValue(ValueText ?? string.Empty, parameter);
-                parameter.MyParameterType = CAD_Parameter.ParameterType.String;
             }
 
             return parameter;
