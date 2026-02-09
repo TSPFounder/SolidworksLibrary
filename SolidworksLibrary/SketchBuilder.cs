@@ -7,291 +7,197 @@ namespace SolidworksLibrary
 {
     public class SketchBuilder
     {
-        public ModelDoc2 SwModelDoc { get; set; }
-        public SolidworksModel MyModel { get; set; }
-        public SketchManager SketchMgr { get; set; }
-        public string PlaneName { get; set; }
-
-        private bool _isBatching;
-
-        public SketchBuilder(SolidworksModel model, string planeName = "Front Plane")
-        {
-            MyModel = model;
-            SwModelDoc = (ModelDoc2)model.SwModelObject;
-            SketchMgr = SwModelDoc.SketchManager;
-            PlaneName = planeName;
-        }
-
-        // -------------------------------------------
-        // Batch Mode
-        // -------------------------------------------
-
-        public void BeginBatch()
-        {
-            if (!_isBatching)
-            {
-                _isBatching = true;
-                BeginSketch();
-            }
-        }
-
-        public void EndBatch()
-        {
-            if (_isBatching)
-            {
-                _isBatching = false;
-                EndSketch();
-            }
-        }
-
         // -------------------------------------------
         // Sketch Session Management
         // -------------------------------------------
 
-        private void BeginSketch()
+        public static void BeginSketch(ModelDoc2 swModelDoc, string planeName)
         {
-            SwModelDoc.Extension.SelectByID2(PlaneName, "PLANE", 0, 0, 0, false, 0, null, 0);
-            SketchMgr.InsertSketch(true);
+            swModelDoc.Extension.SelectByID2(planeName, "PLANE", 0, 0, 0, false, 0, null, 0);
+            swModelDoc.SketchManager.InsertSketch(true);
         }
 
-        private void EndSketch()
+        public static void EndSketch(ModelDoc2 swModelDoc)
         {
-            SketchMgr.InsertSketch(true);
+            swModelDoc.SketchManager.InsertSketch(true);
         }
 
         // -------------------------------------------
         // Lines
         // -------------------------------------------
 
-        public object CreateLine(double x1, double y1, double x2, double y2)
+        public static object CreateLine(SketchManager sketchMgr, double x1, double y1, double x2, double y2)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateLine(x1, y1, 0, x2, y2, 0);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateLine(x1, y1, 0, x2, y2, 0);
         }
 
-        public object CreateCenterLine(double x1, double y1, double x2, double y2)
+        public static object CreateCenterLine(SketchManager sketchMgr, double x1, double y1, double x2, double y2)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCenterLine(x1, y1, 0, x2, y2, 0);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateCenterLine(x1, y1, 0, x2, y2, 0);
         }
 
         // -------------------------------------------
         // Circles
         // -------------------------------------------
 
-        public object CreateCircle(double centerX, double centerY, double radius)
+        public static object CreateCircle(SketchManager sketchMgr, double centerX, double centerY, double radius)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCircle(centerX, centerY, 0, centerX + radius, centerY, 0);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateCircle(centerX, centerY, 0, centerX + radius, centerY, 0);
         }
 
-        public object CreateCircleByRadius(double centerX, double centerY, double radius)
+        public static object CreateCircleByRadius(SketchManager sketchMgr, double centerX, double centerY, double radius)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCircleByRadius(centerX, centerY, 0, radius);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateCircleByRadius(centerX, centerY, 0, radius);
         }
 
-        public object CreatePerimeterCircle(double x1, double y1, double x2, double y2, double x3, double y3)
+        public static object CreatePerimeterCircle(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.PerimeterCircle(x1, y1, x2, y2, x3, y3);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.PerimeterCircle(x1, y1, x2, y2, x3, y3);
         }
 
         // -------------------------------------------
         // Arcs
         // -------------------------------------------
 
-        public object CreateArc(double centerX, double centerY,
+        public static object CreateArc(SketchManager sketchMgr, double centerX, double centerY,
             double startX, double startY, double endX, double endY, short direction)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateArc(centerX, centerY, 0,
+            return sketchMgr.CreateArc(centerX, centerY, 0,
                 startX, startY, 0, endX, endY, 0, direction);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object Create3PointArc(double startX, double startY,
+        public static object Create3PointArc(SketchManager sketchMgr, double startX, double startY,
             double endX, double endY, double midX, double midY)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.Create3PointArc(startX, startY, 0,
+            return sketchMgr.Create3PointArc(startX, startY, 0,
                 endX, endY, 0, midX, midY, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateTangentArc(double startX, double startY,
+        public static object CreateTangentArc(SketchManager sketchMgr, double startX, double startY,
             double endX, double endY, int arcType)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateTangentArc(startX, startY, 0,
+            return sketchMgr.CreateTangentArc(startX, startY, 0,
                 endX, endY, 0, arcType);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Ellipses
         // -------------------------------------------
 
-        public object CreateEllipse(double centerX, double centerY,
+        public static object CreateEllipse(SketchManager sketchMgr, double centerX, double centerY,
             double majorX, double majorY, double minorX, double minorY)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateEllipse(centerX, centerY, 0,
+            return sketchMgr.CreateEllipse(centerX, centerY, 0,
                 majorX, majorY, 0, minorX, minorY, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateEllipticalArc(double centerX, double centerY,
+        public static object CreateEllipticalArc(SketchManager sketchMgr, double centerX, double centerY,
             double majorX, double majorY, double minorX, double minorY,
             double startX, double startY, double endX, double endY,
             short direction)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateEllipticalArc(centerX, centerY, 0,
+            return sketchMgr.CreateEllipticalArc(centerX, centerY, 0,
                 majorX, majorY, 0, minorX, minorY, 0,
                 startX, startY, 0, endX, endY, 0, direction);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Rectangles
         // -------------------------------------------
 
-        public object CreateCornerRectangle(double x1, double y1, double x2, double y2)
+        public static object CreateCornerRectangle(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCornerRectangle(x1, y1, 0, x2, y2, 0);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateCornerRectangle(x1, y1, 0, x2, y2, 0);
         }
 
-        public object CreateCenterRectangle(double centerX, double centerY,
-            double cornerX, double cornerY)
+        public static object CreateCenterRectangle(SketchManager sketchMgr,
+            double centerX, double centerY, double cornerX, double cornerY)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCenterRectangle(centerX, centerY, 0,
+            return sketchMgr.CreateCenterRectangle(centerX, centerY, 0,
                 cornerX, cornerY, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object Create3PointCornerRectangle(double x1, double y1,
-            double x2, double y2, double x3, double y3)
+        public static object Create3PointCornerRectangle(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.Create3PointCornerRectangle(x1, y1, 0,
+            return sketchMgr.Create3PointCornerRectangle(x1, y1, 0,
                 x2, y2, 0, x3, y3, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object Create3PointCenterRectangle(double centerX, double centerY,
-            double x2, double y2, double x3, double y3)
+        public static object Create3PointCenterRectangle(SketchManager sketchMgr,
+            double centerX, double centerY, double x2, double y2, double x3, double y3)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.Create3PointCenterRectangle(centerX, centerY, 0,
+            return sketchMgr.Create3PointCenterRectangle(centerX, centerY, 0,
                 x2, y2, 0, x3, y3, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateParallelogram(double x1, double y1,
-            double x2, double y2, double x3, double y3)
+        public static object CreateParallelogram(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateParallelogram(x1, y1, 0,
+            return sketchMgr.CreateParallelogram(x1, y1, 0,
                 x2, y2, 0, x3, y3, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Polygon
         // -------------------------------------------
 
-        public object CreatePolygon(double centerX, double centerY,
+        public static object CreatePolygon(SketchManager sketchMgr, double centerX, double centerY,
             double vertexX, double vertexY, int sides, bool inscribed)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreatePolygon(centerX, centerY, 0,
+            return sketchMgr.CreatePolygon(centerX, centerY, 0,
                 vertexX, vertexY, 0, sides, inscribed);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Slots
         // -------------------------------------------
 
-        public object CreateStraightSlot(double x1, double y1, double x2, double y2, double width)
+        public static object CreateStraightSlot(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2, double width)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateSketchSlot(
+            return sketchMgr.CreateSketchSlot(
                 (int)swSketchSlotCreationType_e.swSketchSlotCreationType_line,
                 (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
                 width, x1, y1, 0, x2, y2, 0, 0, 0, 0, 1, false);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateCenterpointStraightSlot(double centerX, double centerY,
-            double endX, double endY, double width)
+        public static object CreateCenterpointStraightSlot(SketchManager sketchMgr,
+            double centerX, double centerY, double endX, double endY, double width)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateSketchSlot(
+            return sketchMgr.CreateSketchSlot(
                 (int)swSketchSlotCreationType_e.swSketchSlotCreationType_line,
                 (int)swSketchSlotLengthType_e.swSketchSlotLengthType_FullLength,
                 width, centerX, centerY, 0, endX, endY, 0, 0, 0, 0, 1, false);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object Create3PointArcSlot(double x1, double y1,
-            double x2, double y2, double x3, double y3, double width)
+        public static object Create3PointArcSlot(SketchManager sketchMgr,
+            double x1, double y1, double x2, double y2, double x3, double y3, double width)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateSketchSlot(
+            return sketchMgr.CreateSketchSlot(
                 (int)swSketchSlotCreationType_e.swSketchSlotCreationType_3pointarc,
                 (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
                 width, x1, y1, 0, x2, y2, 0, x3, y3, 0, 1, false);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateCenterpointArcSlot(double centerX, double centerY,
-            double startX, double startY, double endX, double endY, double width)
+        public static object CreateCenterpointArcSlot(SketchManager sketchMgr,
+            double centerX, double centerY, double startX, double startY,
+            double endX, double endY, double width)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateSketchSlot(
+            return sketchMgr.CreateSketchSlot(
                 (int)swSketchSlotCreationType_e.swSketchSlotCreationType_arc,
                 (int)swSketchSlotLengthType_e.swSketchSlotLengthType_CenterCenter,
                 width, centerX, centerY, 0, startX, startY, 0, endX, endY, 0, 1, false);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Splines
         // -------------------------------------------
 
-        public object CreateSpline(double[,] points)
+        public static object CreateSpline(SketchManager sketchMgr, double[,] points)
         {
-            if (!_isBatching) BeginSketch();
             int numPoints = points.GetLength(0);
             Array pointArray = new double[numPoints * 3];
             for (int i = 0; i < numPoints; i++)
@@ -300,129 +206,98 @@ namespace SolidworksLibrary
                 ((double[])pointArray)[i * 3 + 1] = points[i, 1];
                 ((double[])pointArray)[i * 3 + 2] = 0;
             }
-            object result = SketchMgr.CreateSpline2(pointArray, false);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateSpline2(pointArray, false);
         }
 
         // -------------------------------------------
         // Parabola & Conic
         // -------------------------------------------
 
-        public object CreateParabola(double focusX, double focusY,
+        public static object CreateParabola(SketchManager sketchMgr, double focusX, double focusY,
             double apexX, double apexY, double startX, double startY,
             double endX, double endY)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateParabola(focusX, focusY, 0,
+            return sketchMgr.CreateParabola(focusX, focusY, 0,
                 apexX, apexY, 0, startX, startY, 0, endX, endY, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateConic(double startX, double startY,
+        public static object CreateConic(SketchManager sketchMgr, double startX, double startY,
             double endX, double endY, double apexX, double apexY, double rho)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateConic(startX, startY, 0,
+            return sketchMgr.CreateConic(startX, startY, 0,
                 endX, endY, 0, apexX, apexY, 0, rho, 0, 0);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Point
         // -------------------------------------------
 
-        public object CreatePoint(double x, double y)
+        public static object CreatePoint(SketchManager sketchMgr, double x, double y)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreatePoint(x, y, 0);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreatePoint(x, y, 0);
         }
 
         // -------------------------------------------
         // Text
         // -------------------------------------------
 
-        public object CreateText(string text, double x, double y,
+        public static object CreateText(ModelDoc2 swModelDoc, string text, double x, double y,
             int fontHeight, int fontAngle, int centerAlign, int flip, int vFlip)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SwModelDoc.InsertSketchText(x, y, 0, text,
+            return swModelDoc.InsertSketchText(x, y, 0, text,
                 fontHeight, fontAngle, centerAlign, flip, vFlip);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
         // -------------------------------------------
         // Fillet & Chamfer
         // -------------------------------------------
 
-        public object CreateFillet(double radius)
+        public static object CreateFillet(SketchManager sketchMgr, double radius)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateFillet(radius, (int)swConstraintType_e.swConstraintType_TANGENT);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateFillet(radius, (int)swConstraintType_e.swConstraintType_TANGENT);
         }
 
-        public object CreateChamfer(int type, double distance1, double distance2)
+        public static object CreateChamfer(SketchManager sketchMgr, int type, double distance1, double distance2)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateChamfer(type, distance1, distance2);
-            if (!_isBatching) EndSketch();
-            return result;
+            return sketchMgr.CreateChamfer(type, distance1, distance2);
         }
 
         // -------------------------------------------
         // Offset & Mirror
         // -------------------------------------------
 
-        public bool CreateOffset(double offset, bool bothDirections, bool chain,
+        public static bool CreateOffset(SketchManager sketchMgr, double offset, bool bothDirections, bool chain,
             int capEnds, int makeConstruction, bool addDimensions)
         {
-            if (!_isBatching) BeginSketch();
-            bool result = SketchMgr.SketchOffset2(offset, bothDirections, chain,
+            return sketchMgr.SketchOffset2(offset, bothDirections, chain,
                 capEnds, makeConstruction, addDimensions);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public void CreateMirror()
+        public static void CreateMirror(ModelDoc2 swModelDoc)
         {
-            if (!_isBatching) BeginSketch();
-            SwModelDoc.SketchMirror();
-            if (!_isBatching) EndSketch();
+            swModelDoc.SketchMirror();
         }
 
         // -------------------------------------------
         // Linear & Circular Pattern
         // -------------------------------------------
 
-        public bool CreateLinearPattern(int numX, int numY,
+        public static bool CreateLinearPattern(SketchManager sketchMgr, int numX, int numY,
             double spacingX, double spacingY, double angleX, double angleY,
             string deleteInstances, bool xSpacingDim, bool ySpacingDim,
             bool angleDim, bool createNumDimX, bool createNumDimY)
         {
-            if (!_isBatching) BeginSketch();
-            bool result = SketchMgr.CreateLinearSketchStepAndRepeat(
+            return sketchMgr.CreateLinearSketchStepAndRepeat(
                 numX, numY, spacingX, spacingY, angleX, angleY,
                 deleteInstances, xSpacingDim, ySpacingDim, angleDim,
                 createNumDimX, createNumDimY);
-            if (!_isBatching) EndSketch();
-            return result;
         }
 
-        public object CreateCircularPattern(int count, double radius,
+        public static object CreateCircularPattern(SketchManager sketchMgr, int count, double radius,
             double spacing, double arcAngle)
         {
-            if (!_isBatching) BeginSketch();
-            object result = SketchMgr.CreateCircularSketchStepAndRepeat(
+            return sketchMgr.CreateCircularSketchStepAndRepeat(
                 arcAngle, spacing, count, radius, true, "", true, true, true);
-            if (!_isBatching) EndSketch();
-            return result;
         }
     }
 }

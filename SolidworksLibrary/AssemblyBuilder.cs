@@ -7,74 +7,15 @@ using Mathematics;
 
 namespace SolidworksLibrary
 {
-    internal class AssemblyBuilder 
+    public class AssemblyBuilder
     {
-        private readonly SldWorks.SldWorks _swApp;
-        private AssemblyDoc _assemblyDoc;
-        private ModelDoc2 _modelDoc;
-        private CAD_Assembly _myCAD_Assy;
-
-        // -------------------------------------------
-        // Constructor
-        // -------------------------------------------
-        public AssemblyBuilder(SldWorks.SldWorks swApp) { 
-            _swApp = swApp ?? throw new ArgumentNullException(nameof(swApp));
-            _myCAD_Assy = new CAD_Assembly();
-            CreateAssemblyDocument();
-        }
-        public AssemblyBuilder(SldWorks.SldWorks swApp, CoordinateSystem coordinateSystem,
-            SolidworksModel basePart, SolidworksModel otherPart)
-        {
-            _swApp = swApp ?? throw new ArgumentNullException(nameof(swApp));
-
-            if (basePart == null) throw new ArgumentNullException(nameof(basePart));
-            if (otherPart == null) throw new ArgumentNullException(nameof(otherPart));
-
-            _myCAD_Assy = new CAD_Assembly();
-            
-
-            // Create the assembly document
-            CreateAssemblyDocument();
-
-            // Set the assembly's coordinate system
-            CoordinateSystem CurrentCS = coordinateSystem ?? new CoordinateSystem();
-            _myCAD_Assy.AddCoordinateSystem(CurrentCS);
-
-            
-
-            // Add the base part (fixed at origin)
-            var baseComponent = InsertComponent(basePart, true, 0, 0, 0);
-            if (baseComponent != null)
-            {
-                //AddComponent(baseComponent);
-            }
-
-            // Add the other part (positioned relative to coordinate system)
-            double offsetX = coordinateSystem?.OriginLocation?.X_Value ?? 0;
-            double offsetY = coordinateSystem?.OriginLocation?.Y_Value ?? 0;
-            double offsetZ = coordinateSystem?.OriginLocation?.Z_Value_Cartesian ?? 0;
-
-            var otherComponent = InsertComponent(otherPart, false, offsetX, offsetY, offsetZ);
-            if (otherComponent != null)
-            {
-                //AddComponent(otherComponent);
-            }
-        }
-
-        // -------------------------------------------
-        // Properties
-        // -------------------------------------------
-
-        public AssemblyDoc SwAssemblyDoc => _assemblyDoc;
-        public ModelDoc2 SwModelDoc => _modelDoc;
-
         // -------------------------------------------
         // Assembly Document Creation
         // -------------------------------------------
 
-        private void CreateAssemblyDocument()
+        public static AssemblyDoc CreateAssemblyDocument(SldWorks.SldWorks swApp, out ModelDoc2 modelDoc)
         {
-            string assemblyTemplate = _swApp.GetUserPreferenceStringValue(
+            string assemblyTemplate = swApp.GetUserPreferenceStringValue(
                 (int)swUserPreferenceStringValue_e.swDefaultTemplateAssembly);
 
             if (string.IsNullOrEmpty(assemblyTemplate))
@@ -82,21 +23,46 @@ namespace SolidworksLibrary
                 throw new InvalidOperationException("Assembly template not found in SolidWorks settings.");
             }
 
-            object model = _swApp.NewDocument(assemblyTemplate, 0, 0, 0);
+            object model = swApp.NewDocument(assemblyTemplate, 0, 0, 0);
             if (model == null)
             {
                 throw new InvalidOperationException("Failed to create assembly document.");
             }
 
-            _modelDoc = (ModelDoc2)model;
-            _assemblyDoc = (AssemblyDoc)model;
+            modelDoc = (ModelDoc2)model;
+            return (AssemblyDoc)model;
+        }
+
+        public static AssemblyDoc CreateAssemblyWithComponents(SldWorks.SldWorks swApp,
+            CoordinateSystem coordinateSystem, SolidworksModel basePart, SolidworksModel otherPart,
+            out ModelDoc2 modelDoc)
+        {
+            if (basePart == null) throw new ArgumentNullException(nameof(basePart));
+            if (otherPart == null) throw new ArgumentNullException(nameof(otherPart));
+
+            var assemblyDoc = CreateAssemblyDocument(swApp, out modelDoc);
+
+            var cadAssy = new CAD_Assembly();
+            CoordinateSystem currentCS = coordinateSystem ?? new CoordinateSystem();
+            cadAssy.AddCoordinateSystem(currentCS);
+
+            InsertComponent(assemblyDoc, modelDoc, basePart, true, 0, 0, 0);
+
+            double offsetX = coordinateSystem?.OriginLocation?.X_Value ?? 0;
+            double offsetY = coordinateSystem?.OriginLocation?.Y_Value ?? 0;
+            double offsetZ = coordinateSystem?.OriginLocation?.Z_Value_Cartesian ?? 0;
+
+            InsertComponent(assemblyDoc, modelDoc, otherPart, false, offsetX, offsetY, offsetZ);
+
+            return assemblyDoc;
         }
 
         // -------------------------------------------
         // Component Insertion
         // -------------------------------------------
 
-        public CAD_Component InsertComponent(SolidworksModel partModel, bool fixedPosition,
+        public static CAD_Component InsertComponent(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            SolidworksModel partModel, bool fixedPosition,
             double x, double y, double z)
         {
             if (partModel?.SwModelObject == null)
@@ -114,7 +80,7 @@ namespace SolidworksLibrary
                 return null;
             }
 
-            Component2 swComponent = _assemblyDoc.AddComponent5(
+            Component2 swComponent = assemblyDoc.AddComponent5(
                 partPath,
                 (int)swAddComponentConfigOptions_e.swAddComponentConfigOptions_CurrentSelectedConfig,
                 "",
@@ -131,7 +97,7 @@ namespace SolidworksLibrary
             if (fixedPosition)
             {
                 swComponent.Select4(false, null, false);
-                _assemblyDoc.FixComponent();
+                assemblyDoc.FixComponent();
             }
 
             var cadComponent = new CAD_Component
@@ -139,7 +105,6 @@ namespace SolidworksLibrary
                 Name = swComponent.Name2,
                 Path = partPath,
                 IsAssembly = false,
-                //MyPart = (CAD_Part)partModel.MyCADModel?.CurrentPart
             };
 
             return cadComponent;
@@ -149,8 +114,9 @@ namespace SolidworksLibrary
         // Component Insertion with Transform
         // -------------------------------------------
 
-        public CAD_Component InsertComponentWithTransform(SolidworksModel partModel,
-            CoordinateSystem localCS)
+        public static CAD_Component InsertComponentWithTransform(SldWorks.SldWorks swApp,
+            AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            SolidworksModel partModel, CoordinateSystem localCS)
         {
             if (partModel?.SwModelObject == null || localCS == null)
             {
@@ -161,11 +127,11 @@ namespace SolidworksLibrary
             double y = localCS.OriginLocation?.Y_Value ?? 0;
             double z = localCS.OriginLocation?.Z_Value_Cartesian ?? 0;
 
-            var component = InsertComponent(partModel, false, x, y, z);
+            var component = InsertComponent(assemblyDoc, modelDoc, partModel, false, x, y, z);
 
             if (component != null && localCS.Vectors != null && localCS.Vectors.Count >= 2)
             {
-                ApplyComponentTransform(component.Name, localCS);
+                ApplyComponentTransform(swApp, modelDoc, component.Name, localCS);
             }
 
             return component;
@@ -175,18 +141,19 @@ namespace SolidworksLibrary
         // Transform Application
         // -------------------------------------------
 
-        private void ApplyComponentTransform(string componentName, CoordinateSystem cs)
+        public static void ApplyComponentTransform(SldWorks.SldWorks swApp,
+            ModelDoc2 modelDoc, string componentName, CoordinateSystem cs)
         {
             if (string.IsNullOrEmpty(componentName) || cs == null) return;
 
-            _modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0);
+            modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0);
 
-            SelectionMgr selMgr = (SelectionMgr)_modelDoc.SelectionManager;
+            SelectionMgr selMgr = (SelectionMgr)modelDoc.SelectionManager;
             Component2 comp = (Component2)selMgr.GetSelectedObject6(1, -1);
 
             if (comp == null) return;
 
-            MathUtility mathUtil = (MathUtility)_swApp.GetMathUtility();
+            MathUtility mathUtil = (MathUtility)swApp.GetMathUtility();
 
             double[] transformData = new double[16];
 
@@ -238,65 +205,67 @@ namespace SolidworksLibrary
             MathTransform transform = (MathTransform)mathUtil.CreateTransform(transformData);
             comp.Transform2 = transform;
 
-            _modelDoc.ClearSelection2(true);
+            modelDoc.ClearSelection2(true);
         }
 
         // -------------------------------------------
         // Core Mate Helpers
         // -------------------------------------------
 
-        private bool CreateComponentMate(string comp1Name, string comp2Name,
+        public static bool CreateComponentMate(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name,
             swMateType_e mateType, swMateAlign_e alignment = swMateAlign_e.swMateAlignALIGNED,
             double value1 = 0, string entityType = "COMPONENT")
         {
-            bool selected1 = _modelDoc.Extension.SelectByID2(
+            bool selected1 = modelDoc.Extension.SelectByID2(
                 comp1Name, entityType, 0, 0, 0, false, 1, null, 0);
-            bool selected2 = _modelDoc.Extension.SelectByID2(
+            bool selected2 = modelDoc.Extension.SelectByID2(
                 comp2Name, entityType, 0, 0, 0, true, 1, null, 0);
 
             if (!selected1 || !selected2)
             {
-                _modelDoc.ClearSelection2(true);
+                modelDoc.ClearSelection2(true);
                 return false;
             }
 
             int errors = 0;
-            Mate2 mate = _assemblyDoc.AddMate5(
+            Mate2 mate = assemblyDoc.AddMate5(
                 (int)mateType,
                 (int)alignment,
                 false, value1, 0, 0, 0, 0, 0, 0, 0,
                 false, false, 0, out errors);
 
-            _modelDoc.ClearSelection2(true);
+            modelDoc.ClearSelection2(true);
             return mate != null && errors == 0;
         }
 
-        private bool CreateFaceMate(string comp1Name, string face1Name,
+        public static bool CreateFaceMate(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string face1Name,
             string comp2Name, string face2Name,
             swMateType_e mateType, double value1 = 0)
         {
-            string title = _modelDoc.GetTitle();
-            bool selected1 = _modelDoc.Extension.SelectByID2(
+            string title = modelDoc.GetTitle();
+            bool selected1 = modelDoc.Extension.SelectByID2(
                 $"{face1Name}@{comp1Name}@{title}",
                 "FACE", 0, 0, 0, false, 1, null, 0);
-            bool selected2 = _modelDoc.Extension.SelectByID2(
+            bool selected2 = modelDoc.Extension.SelectByID2(
                 $"{face2Name}@{comp2Name}@{title}",
                 "FACE", 0, 0, 0, true, 1, null, 0);
 
             if (!selected1 || !selected2)
             {
-                _modelDoc.ClearSelection2(true);
+                modelDoc.ClearSelection2(true);
                 return false;
             }
 
             int errors = 0;
-            Mate2 mate = _assemblyDoc.AddMate5(
+            Mate2 mate = assemblyDoc.AddMate5(
                 (int)mateType,
                 (int)swMateAlign_e.swMateAlignALIGNED,
                 false, value1, 0, 0, 0, 0, 0, 0, 0,
                 false, false, 0, out errors);
 
-            _modelDoc.ClearSelection2(true);
+            modelDoc.ClearSelection2(true);
             return mate != null && errors == 0;
         }
 
@@ -304,39 +273,43 @@ namespace SolidworksLibrary
         // Face-Based Mate Methods
         // -------------------------------------------
 
-        public bool CreateCoincidentMate(string component1Name, string face1Name,
+        public static bool CreateCoincidentMate(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string component1Name, string face1Name,
             string component2Name, string face2Name)
         {
-            return CreateFaceMate(component1Name, face1Name, component2Name, face2Name,
-                swMateType_e.swMateCOINCIDENT);
+            return CreateFaceMate(assemblyDoc, modelDoc, component1Name, face1Name,
+                component2Name, face2Name, swMateType_e.swMateCOINCIDENT);
         }
 
-        public bool CreateConcentricMate(string component1Name, string face1Name,
+        public static bool CreateConcentricMate(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string component1Name, string face1Name,
             string component2Name, string face2Name)
         {
-            return CreateFaceMate(component1Name, face1Name, component2Name, face2Name,
-                swMateType_e.swMateCONCENTRIC);
+            return CreateFaceMate(assemblyDoc, modelDoc, component1Name, face1Name,
+                component2Name, face2Name, swMateType_e.swMateCONCENTRIC);
         }
 
-        public bool CreateDistanceMate(string component1Name, string face1Name,
+        public static bool CreateDistanceMate(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string component1Name, string face1Name,
             string component2Name, string face2Name, double distance)
         {
-            return CreateFaceMate(component1Name, face1Name, component2Name, face2Name,
-                swMateType_e.swMateDISTANCE, distance);
+            return CreateFaceMate(assemblyDoc, modelDoc, component1Name, face1Name,
+                component2Name, face2Name, swMateType_e.swMateDISTANCE, distance);
         }
 
         // -------------------------------------------
         // Joint Builder Dispatch
         // -------------------------------------------
 
-        public CAD_Joint BuildJoint(SolidworksModel part1, SolidworksModel part2, CAD_Joint joint)
+        public static CAD_Joint BuildJoint(SldWorks.SldWorks swApp, AssemblyDoc assemblyDoc,
+            ModelDoc2 modelDoc, SolidworksModel part1, SolidworksModel part2, CAD_Joint joint)
         {
             if (part1 == null) throw new ArgumentNullException(nameof(part1));
             if (part2 == null) throw new ArgumentNullException(nameof(part2));
             if (joint == null) throw new ArgumentNullException(nameof(joint));
 
-            string comp1Name = GetComponentNameFromModel(part1);
-            string comp2Name = GetComponentNameFromModel(part2);
+            string comp1Name = GetComponentNameFromModel(assemblyDoc, part1);
+            string comp2Name = GetComponentNameFromModel(assemblyDoc, part2);
 
             if (string.IsNullOrEmpty(comp1Name) || string.IsNullOrEmpty(comp2Name))
             {
@@ -348,34 +321,32 @@ namespace SolidworksLibrary
             switch (joint.JointType)
             {
                 case CAD_Joint.JointTypeEnum.Rigid:
-                    success = BuildRigidJoint(comp1Name, comp2Name, joint);
+                    success = BuildRigidJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.Revolute:
-                    success = BuildRevoluteJoint(comp1Name, comp2Name, joint);
+                    success = BuildRevoluteJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.Slider:
-                    success = BuildSliderJoint(comp1Name, comp2Name, joint);
+                    success = BuildSliderJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.Cylindrical:
-                    success = BuildCylindricalJoint(comp1Name, comp2Name, joint);
+                    success = BuildCylindricalJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.PinSlot:
-                    success = BuildPinSlotJoint(comp1Name, comp2Name, joint);
+                    success = BuildPinSlotJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.Planar:
-                    success = BuildPlanarJoint(comp1Name, comp2Name, joint);
-                    break;
                 case CAD_Joint.JointTypeEnum.InPlane:
-                    success = BuildPlanarJoint(comp1Name, comp2Name, joint);
+                    success = BuildPlanarJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.Ball:
-                    success = BuildBallJoint(comp1Name, comp2Name, joint);
+                    success = BuildBallJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 case CAD_Joint.JointTypeEnum.LeadScrew:
-                    success = BuildLeadScrewJoint(comp1Name, comp2Name, joint);
+                    success = BuildLeadScrewJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
                 default:
-                    success = BuildRigidJoint(comp1Name, comp2Name, joint);
+                    success = BuildRigidJoint(assemblyDoc, modelDoc, comp1Name, comp2Name);
                     break;
             }
 
@@ -388,132 +359,148 @@ namespace SolidworksLibrary
         }
 
         // -------------------------------------------
-        // Simple Joint Builders (one-liners via CreateComponentMate)
+        // Simple Joint Builders
         // -------------------------------------------
 
-        public bool BuildRigidJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildRigidJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateLOCK);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateLOCK);
         }
 
-        public bool BuildCylindricalJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildCylindricalJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateCONCENTRIC);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateCONCENTRIC);
         }
 
-        public bool BuildPinSlotJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildPinSlotJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateSLOT);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateSLOT);
         }
 
-        public bool BuildPlanarJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildPlanarJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateCOINCIDENT);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateCOINCIDENT);
         }
 
-        public bool BuildLeadScrewJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildLeadScrewJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateSCREW, value1: 0.01);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateSCREW, value1: 0.01);
         }
 
-        public bool BuildGearJoint(string comp1Name, string comp2Name, double ratio)
+        public static bool BuildGearJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name, double ratio)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateGEAR, value1: ratio);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateGEAR, value1: ratio);
         }
 
-        public bool BuildRackPinionJoint(string comp1Name, string comp2Name, double pinionPitch)
+        public static bool BuildRackPinionJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name, double pinionPitch)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateRACKPINION, value1: pinionPitch);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateRACKPINION, value1: pinionPitch);
         }
 
-        public bool BuildCamJoint(string comp1Name, string comp2Name)
+        public static bool BuildCamJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateTANGENT);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateTANGENT);
         }
 
-        public bool BuildTangentJoint(string comp1Name, string comp2Name)
+        public static bool BuildTangentJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateTANGENT);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateTANGENT);
         }
 
-        public bool BuildPerpendicularJoint(string comp1Name, string comp2Name)
+        public static bool BuildPerpendicularJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMatePERPENDICULAR);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMatePERPENDICULAR);
         }
 
-        public bool BuildAngleJoint(string comp1Name, string comp2Name, double angleRadians)
+        public static bool BuildAngleJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name, double angleRadians)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateANGLE, value1: angleRadians);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateANGLE, value1: angleRadians);
         }
 
-        public bool BuildParallelJoint(string comp1Name, string comp2Name)
+        public static bool BuildParallelJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMatePARALLEL);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMatePARALLEL);
         }
 
-        public bool BuildSymmetricJoint(string comp1Name, string comp2Name)
+        public static bool BuildSymmetricJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateSYMMETRIC);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateSYMMETRIC);
         }
 
-        public bool BuildWidthJoint(string comp1Name, string comp2Name)
+        public static bool BuildWidthJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateWIDTH);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateWIDTH);
         }
 
-        public bool BuildPathJoint(string comp1Name, string comp2Name)
+        public static bool BuildPathJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMatePATH);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMatePATH);
         }
 
-        public bool BuildLinearCouplerJoint(string comp1Name, string comp2Name, double ratio)
+        public static bool BuildLinearCouplerJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name, double ratio)
         {
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateLINEARCOUPLER, value1: ratio);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateLINEARCOUPLER, value1: ratio);
         }
 
         // -------------------------------------------
         // Joint Builders with Fallback Logic
         // -------------------------------------------
 
-        public bool BuildRevoluteJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildRevoluteJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            if (CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateHINGE))
+            if (CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateHINGE))
                 return true;
 
-            // Fallback: try concentric mate if hinge fails
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateCONCENTRIC);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateCONCENTRIC);
         }
 
-        public bool BuildSliderJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildSliderJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            if (CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateSLOT))
+            if (CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateSLOT))
                 return true;
 
-            // Fallback: use parallel for linear constraint
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMatePARALLEL);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMatePARALLEL);
         }
 
-        public bool BuildBallJoint(string comp1Name, string comp2Name, CAD_Joint joint)
+        public static bool BuildBallJoint(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc,
+            string comp1Name, string comp2Name)
         {
-            if (CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateUNIVERSALJOINT))
+            if (CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateUNIVERSALJOINT))
                 return true;
 
-            // Fallback: point coincident for spherical constraint
-            return CreateComponentMate(comp1Name, comp2Name, swMateType_e.swMateCOINCIDENT);
+            return CreateComponentMate(assemblyDoc, modelDoc, comp1Name, comp2Name, swMateType_e.swMateCOINCIDENT);
         }
 
         // -------------------------------------------
         // Helper Methods
         // -------------------------------------------
 
-        private string GetComponentNameFromModel(SolidworksModel model)
+        public static string GetComponentNameFromModel(AssemblyDoc assemblyDoc, SolidworksModel model)
         {
             if (model?.SwModelObject == null) return null;
 
             ModelDoc2 partDoc = (ModelDoc2)model.SwModelObject;
             string partPath = partDoc.GetPathName();
 
-            object[] components = (object[])_assemblyDoc.GetComponents(true);
+            object[] components = (object[])assemblyDoc.GetComponents(true);
             if (components != null)
             {
                 foreach (object obj in components)
@@ -533,52 +520,53 @@ namespace SolidworksLibrary
         // Component Operations
         // -------------------------------------------
 
-        public void FixComponent(string componentName)
+        public static void FixComponent(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc, string componentName)
         {
-            if (_modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
+            if (modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
             {
-                _assemblyDoc.FixComponent();
-                _modelDoc.ClearSelection2(true);
+                assemblyDoc.FixComponent();
+                modelDoc.ClearSelection2(true);
             }
         }
 
-        public void FloatComponent(string componentName)
+        public static void FloatComponent(AssemblyDoc assemblyDoc, ModelDoc2 modelDoc, string componentName)
         {
-            if (_modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
+            if (modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
             {
-                _assemblyDoc.UnfixComponent();
-                _modelDoc.ClearSelection2(true);
+                assemblyDoc.UnfixComponent();
+                modelDoc.ClearSelection2(true);
             }
         }
 
-        public void MoveComponent(string componentName, double dx, double dy, double dz)
+        public static void MoveComponent(SldWorks.SldWorks swApp, ModelDoc2 modelDoc,
+            string componentName, double dx, double dy, double dz)
         {
-            if (!_modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
+            if (!modelDoc.Extension.SelectByID2(componentName, "COMPONENT", 0, 0, 0, false, 0, null, 0))
                 return;
 
-            SelectionMgr selMgr = (SelectionMgr)_modelDoc.SelectionManager;
+            SelectionMgr selMgr = (SelectionMgr)modelDoc.SelectionManager;
             Component2 comp = (Component2)selMgr.GetSelectedObject6(1, -1);
 
             if (comp == null) return;
 
             MathTransform currentTransform = comp.Transform2;
-            MathUtility mathUtil = (MathUtility)_swApp.GetMathUtility();
+            MathUtility mathUtil = (MathUtility)swApp.GetMathUtility();
 
             double[] translation = { 1, 0, 0, 0, 1, 0, 0, 0, 1, dx, dy, dz, 1, 0, 0, 0 };
             MathTransform translateTransform = (MathTransform)mathUtil.CreateTransform(translation);
 
             comp.Transform2 = (MathTransform)currentTransform.Multiply(translateTransform);
-            _modelDoc.ClearSelection2(true);
+            modelDoc.ClearSelection2(true);
         }
 
         // -------------------------------------------
         // Assembly Information
         // -------------------------------------------
 
-        public List<string> GetComponentNames()
+        public static List<string> GetComponentNames(AssemblyDoc assemblyDoc)
         {
             var names = new List<string>();
-            object[] components = (object[])_assemblyDoc.GetComponents(true);
+            object[] components = (object[])assemblyDoc.GetComponents(true);
 
             if (components != null)
             {
@@ -592,9 +580,9 @@ namespace SolidworksLibrary
             return names;
         }
 
-        public int GetComponentCount()
+        public static int GetComponentCount(AssemblyDoc assemblyDoc)
         {
-            object[] components = (object[])_assemblyDoc.GetComponents(true);
+            object[] components = (object[])assemblyDoc.GetComponents(true);
             return components?.Length ?? 0;
         }
 
@@ -602,12 +590,12 @@ namespace SolidworksLibrary
         // Save Operations
         // -------------------------------------------
 
-        public bool SaveAssembly(string filePath)
+        public static bool SaveAssembly(ModelDoc2 modelDoc, string filePath)
         {
             if (string.IsNullOrEmpty(filePath)) return false;
 
             int errors = 0, warnings = 0;
-            bool result = _modelDoc.Extension.SaveAs(
+            bool result = modelDoc.Extension.SaveAs(
                 filePath,
                 (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
                 (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
@@ -625,14 +613,14 @@ namespace SolidworksLibrary
         // Rebuild and Update
         // -------------------------------------------
 
-        public void RebuildAssembly()
+        public static void RebuildAssembly(ModelDoc2 modelDoc)
         {
-            _modelDoc.ForceRebuild3(true);
+            modelDoc.ForceRebuild3(true);
         }
 
-        public void ZoomToFit()
+        public static void ZoomToFit(ModelDoc2 modelDoc)
         {
-            _modelDoc.ViewZoomtofit2();
+            modelDoc.ViewZoomtofit2();
         }
     }
 }

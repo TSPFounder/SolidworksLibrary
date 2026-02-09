@@ -1,21 +1,26 @@
-﻿using System;
+﻿using CAD;
 using SldWorks;
 using SwConst;
-using CAD;
+using System;
+using System.Runtime.InteropServices;
 
 namespace SolidworksLibrary
 {
-    internal class ConstructionBuilder
+    public sealed class ConstructionBuilder
     {
         private readonly ModelDoc2 _modelDoc;
-        private readonly SketchManager _sketchManager;
+        public SketchManager _sketchManager;
         private readonly FeatureManager _featureManager;
 
+
+        public ConstructionBuilder() { }
         public ConstructionBuilder(ModelDoc2 modelDoc)
         {
             _modelDoc = modelDoc ?? throw new ArgumentNullException(nameof(modelDoc));
-            _sketchManager = modelDoc.SketchManager ?? throw new InvalidOperationException("SketchManager is required for construction geometry.");
-            _featureManager = modelDoc.FeatureManager ?? throw new InvalidOperationException("FeatureManager is required for reference geometry.");
+            SldWorks.ModelDoc2 swModel = (SldWorks.ModelDoc2)_modelDoc;
+            swModel.Extension.SelectByID2("Front Plane", "PLANE", 0, 0, 0, false, 0, null, 0);
+            _sketchManager = swModel.SketchManager ?? throw new InvalidOperationException("SketchManager is required for construction geometry.");
+            _featureManager = swModel.FeatureManager ?? throw new InvalidOperationException("FeatureManager is required for reference geometry.");
         }
 
         public static void StartSketch(ModelDoc2 modelDoc, SketchManager sketchManager, string targetPlane = "Front Plane")
@@ -34,43 +39,53 @@ namespace SolidworksLibrary
             _sketchManager.InsertSketch(true);
         }
 
-        public SketchPoint CreateConstructionPoint(double x, double y, double z)
+        public static SketchPoint CreateConstructionPoint(double x, double y, double z, SketchManager sketchManager)
         {
-            return _sketchManager.CreatePoint(x, y, z);
+            return sketchManager.CreatePoint(x, y, z);
         }
 
-        public SketchLine CreateConstructionLine(double startX, double startY, double startZ, double endX, double endY, double endZ)
+        public static SketchLine CreateConstructionLine(double startX, double startY, double startZ, double endX, double endY, double endZ, SketchManager sketchManager)
         {
-            var line = (SketchLine)_sketchManager.CreateLine(startX, startY, startZ, endX, endY, endZ);
+            var line = (SketchLine) sketchManager.CreateLine(startX, startY, startZ, endX, endY, endZ);
             MarkAsConstruction(line);
             return line;
         }
 
-        public SketchLine CreateConstructionCenterline(double startX, double startY, double startZ, double endX, double endY, double endZ)
+        public static SketchLine CreateConstructionCenterline(double startX, double startY, double startZ, double endX, double endY, double endZ, SketchManager sketchManager)
         {
-            var centerLine = (SketchLine)_sketchManager.CreateCenterLine(startX, startY, startZ, endX, endY, endZ);
+            var centerLine = (SketchLine)sketchManager.CreateCenterLine(startX, startY, startZ, endX, endY, endZ);
             MarkAsConstruction(centerLine);
             return centerLine;
         }
 
-        public SketchArc CreateConstructionArc(double centerX, double centerY, double centerZ,
+        public static SketchArc CreateConstructionArc(double centerX, double centerY, double centerZ,
             double startX, double startY, double startZ,
-            double endX, double endY, double endZ, bool clockwise = true)
+            double endX, double endY, double endZ, SketchManager sketchManager, bool clockwise = true)
         {
-            var arc = (SketchArc)_sketchManager.CreateArc(centerX, centerY, centerZ, startX, startY, startZ,
+            var arc = (SketchArc)sketchManager.CreateArc(centerX, centerY, centerZ, startX, startY, startZ,
                 endX, endY, endZ, (short)(clockwise ? 1 : 0));
             MarkAsConstruction(arc);
             return arc;
         }
-        
-        public SketchArc CreateConstructionCircle(double centerX, double centerY, double centerZ, double radius)
+
+
+
+        /*
+       
+        public static SketchArc CreateConstructionCircle(double centerX, double centerY, double centerZ, double radius)
         {
-            var circle = (SketchArc)_sketchManager.CreateCircleByRadius(centerX, centerY, centerZ, radius);
-            MarkAsConstruction(circle);
+            var sketchManager = ConstructionBuilder._sketchManager.;
+            var circle = (SketchArc)sketchManager.CreateCircleByRadius(centerX, centerY, centerZ, radius);
+            //MarkAsConstruction(circle);
+
+            
             return circle;
         }
+       
+        */
 
-        public SketchSegment[] CreateConstructionSlot(double centerX, double centerY, double centerZ, double length, double width)
+
+        public static SketchSegment[] CreateConstructionSlot(double centerX, double centerY, double centerZ, double length, double width, SketchManager sketchManager)
         {
             if (length <= width)
             {
@@ -82,21 +97,21 @@ namespace SolidworksLibrary
             double leftX = centerX - halfLength + halfWidth;
             double rightX = centerX + halfLength - halfWidth;
 
-            var bottomLine = CreateConstructionLine(leftX, centerY - halfWidth, centerZ, rightX, centerY - halfWidth, centerZ);
-            var topLine = CreateConstructionLine(rightX, centerY + halfWidth, centerZ, leftX, centerY + halfWidth, centerZ);
+            var bottomLine = CreateConstructionLine(leftX, centerY - halfWidth, centerZ, rightX, centerY - halfWidth, centerZ, sketchManager);
+            var topLine = CreateConstructionLine(rightX, centerY + halfWidth, centerZ, leftX, centerY + halfWidth, centerZ, sketchManager);
             var leftArc = CreateConstructionArc(leftX, centerY, centerZ,
                 leftX, centerY + halfWidth, centerZ,
-                leftX, centerY - halfWidth, centerZ, false);
+                leftX, centerY - halfWidth, centerZ, sketchManager, false);
             var rightArc = CreateConstructionArc(rightX, centerY, centerZ,
                 rightX, centerY - halfWidth, centerZ,
-                rightX, centerY + halfWidth, centerZ, false);
+                rightX, centerY + halfWidth, centerZ, sketchManager, false);
 
             return new SketchSegment[] { (SketchSegment)bottomLine, (SketchSegment)rightArc, (SketchSegment)topLine, (SketchSegment)leftArc };
         }
 
-        public Feature CreateReferencePlane(swRefPlaneType_e planeType, double value1, int value2, double value3, int value4, double value5)
+        public static Feature CreateReferencePlane(swRefPlaneType_e planeType, double value1, int value2, double value3, int value4, double value5, FeatureManager featureManager)
         {
-            return (Feature)_featureManager.InsertRefPlane((int)planeType, value1, value2, value3, value4, value5);
+            return (Feature)featureManager.InsertRefPlane((int)planeType, value1, value2, value3, value4, value5);
         }
 
         private static void MarkAsConstruction(object entity)
