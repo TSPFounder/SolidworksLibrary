@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SolidworksLibrary.Automation
 {
-    public sealed class SimulationModelSnapshot
+    public sealed class SimulationModelSnapshot : SimulationSnapshot
     {
         public SimulationModelSnapshot(SimulationDomain domain, string modelName, IReadOnlyList<SimulationParameter> parameters)
         {

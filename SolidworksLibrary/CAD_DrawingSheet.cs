@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace CAD
@@ -150,5 +151,10 @@ namespace CAD
 
         public override string ToString()
             => $"Sheet {SheetNumber} ({Size}, {SheetOrientation})" + (string.IsNullOrWhiteSpace(SheetID) ? "" : $" - {SheetID}");
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_DrawingSheet FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingSheet>(json);
     }
 }

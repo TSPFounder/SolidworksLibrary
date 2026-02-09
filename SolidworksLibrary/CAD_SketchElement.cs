@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Mathematics;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Mathematics;
 
 namespace CAD
 {
@@ -131,5 +132,10 @@ namespace CAD
             CurrentPoint = null;
             CurrentPrimitive = null;
         }
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_SketchElement FromJson(string json) => JsonConvert.DeserializeObject<CAD_SketchElement>(json);
     }
 }

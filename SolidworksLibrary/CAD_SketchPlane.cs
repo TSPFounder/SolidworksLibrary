@@ -1,7 +1,8 @@
 ﻿
+using Mathematics;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Mathematics;
 
 namespace CAD
 {
@@ -134,5 +135,10 @@ namespace CAD
 
         public override string ToString()
             => $"{Name ?? "SketchPlane"} [{FunctionalType}, {GeometryType}]  IsWorkplane={IsWorkplane}";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_SketchPlane FromJson(string json) => JsonConvert.DeserializeObject<CAD_SketchPlane>(json);
     }
 }

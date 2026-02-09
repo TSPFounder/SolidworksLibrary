@@ -1,8 +1,9 @@
 ﻿
+using Mathematics;
+using Newtonsoft.Json;
+using SE_Library;
 using System;
 using System.Collections.Generic;
-using Mathematics;
-using SE_Library;
 
 namespace CAD
 {
@@ -501,5 +502,10 @@ namespace CAD
         {
             throw new NotImplementedException("CreateSquareSlot must be implemented in a derived class.");
         }
+
+        // JSON Serialization
+        public new string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static new CAD_Feature FromJson(string json) => JsonConvert.DeserializeObject<CAD_Feature>(json);
     }
 }

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using Documents;
+﻿using Documents;
+using Newtonsoft.Json;
 using SE_Library;
+using System.Collections.Generic;
 
 namespace CAD
 {
@@ -66,5 +67,10 @@ namespace CAD
             if (drawingTitle != null) DrawingTitle = drawingTitle;
             if (revision != null) Revision = revision;
         }
+
+        // JSON Serialization
+        public new string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static new CAD_DrawingTable FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingTable>(json);
     }
 }

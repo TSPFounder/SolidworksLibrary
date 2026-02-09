@@ -1,7 +1,8 @@
 ﻿
+using Newtonsoft.Json;
+using SE_Library;
 using System;
 using System.Collections.Generic;
-using SE_Library;
 
 namespace CAD
 {
@@ -81,5 +82,10 @@ namespace CAD
 
         public override string ToString()
             => $"DrawingElement(Name={Name ?? "<null>"}, Type={MyType}, CG Count={MyConstructionGeometry.Count})";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_DrawingElement FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingElement>(json);
     }
 }

@@ -28,10 +28,10 @@ namespace SolidworksLibrary.Automation
         {
             var snapshot = _simulationAdapter.CaptureSnapshot(request);
             var mapped = MapParameters(snapshot.Parameters);
-            return _parameterSink.ApplyParameters(_solidworksApp.currentSw_Model, mapped, options ?? new BridgeSyncOptions());
+            return _parameterSink.ApplyParameters(_solidworksApp.CurrentSw_Model, mapped, options ?? new BridgeSyncOptions());
         }
 
-        private IEnumerable<CAD_Parameter> MapParameters(IEnumerable<SimulationParameter> parameters)
+        private IEnumerable<CadParameter> MapParameters(IEnumerable<SimulationParameter> parameters)
         {
             return parameters.Select(parameter => parameter.ToCadParameter(_parameterMapper.MapToCadName(parameter)));
         }

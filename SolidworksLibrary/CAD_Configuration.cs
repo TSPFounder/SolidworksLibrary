@@ -1,8 +1,9 @@
 ﻿
-using System;
-using Mathematics;
-using SE_Library;
 using Documents;
+using Mathematics;
+using Newtonsoft.Json;
+using SE_Library;
+using System;
 
 namespace CAD
 {
@@ -33,5 +34,10 @@ namespace CAD
         // -----------------------------
         public override string ToString()
             => $"CAD_Configuration(Name={Name ?? "<null>"}, ID={ID ?? "<null>"}, Rev={Revision ?? "<null>"})";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Configuration FromJson(string json) => JsonConvert.DeserializeObject<CAD_Configuration>(json);
     }
 }

@@ -11,7 +11,7 @@ using SolidworksLibrary.Automation;
 
 namespace SolidworksLibrary
 {
-    public sealed class SolidworksApp : IDisposable
+    public sealed class SolidworksApp //: IDisposable
     {
         // -----------------------------
         // Properties
@@ -26,6 +26,7 @@ namespace SolidworksLibrary
         /// Creates a new SolidworksModel instance to hold the current model.
         /// </summary>
         private SolidworksModel _currentSw_Model;
+        public SolidworksModel CurrentSw_Model => _currentSw_Model;
         /// <summary>
         /// Creates a new AssemblyBuilder instance to hold the current assembly document.
         /// </summary>
@@ -120,8 +121,8 @@ namespace SolidworksLibrary
         }
         
          public void createModel() {
-            currentSw_Model = new SolidworksModel();
-            currentSw_Model.SwModelObject = SwApp.ActiveDoc;
+            _currentSw_Model = new SolidworksModel();
+            _currentSw_Model.SwModelObject = _SwApp.ActiveDoc;
         }
 
         public CadAutomationBridge CreateAutomationBridge(
@@ -130,7 +131,7 @@ namespace SolidworksLibrary
             ICadParameterSink parameterSink = null)
         {
             var mapper = parameterMapper ?? new ParameterMappingProfile();
-            var sink = parameterSink ?? new SolidworksParameterSink();
+            var sink = parameterSink ?? new SolidworksParameterSinkAdapter();
             return new CadAutomationBridge(this, simulationAdapter, mapper, sink);
         }
        

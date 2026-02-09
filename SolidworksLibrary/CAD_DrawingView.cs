@@ -1,6 +1,7 @@
 ﻿
-using System;
 using Mathematics;
+using Newtonsoft.Json;
+using System;
 
 namespace CAD
 {
@@ -74,5 +75,10 @@ namespace CAD
         // -----------------------------
         public override string ToString()
             => $"{Title ?? Type.ToString()} ({Type})#{ID}";
+
+        // JSON Serialization
+        public new string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static new CAD_DrawingView FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingView>(json);
     }
 }

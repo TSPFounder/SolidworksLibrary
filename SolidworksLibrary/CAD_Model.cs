@@ -1,9 +1,10 @@
 ﻿//
+using Documents;
+using Mathematics;
+using Newtonsoft.Json;
+using SE_Library;
 using System;
 using System.Collections.Generic;
-using Mathematics;
-using SE_Library;
-using Documents;
 //using MissionsNamespace;
 using System.IO.Compression;
 
@@ -198,5 +199,10 @@ namespace CAD
 
         public override string ToString()
             => $"CAD_Model(Name={(Name ?? "<null>")}, App={CAD_AppName}, Type={ModelType}, FileType={FileType}, Parts={MyParts.Count}, Features={MyFeatures.Count})";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Model FromJson(string json) => JsonConvert.DeserializeObject<CAD_Model>(json);
     }
 }

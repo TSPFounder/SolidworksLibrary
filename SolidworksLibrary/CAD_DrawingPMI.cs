@@ -1,4 +1,6 @@
-﻿namespace CAD
+﻿using Newtonsoft.Json;
+
+namespace CAD
 {
     /// <summary>
     /// Product & Manufacturing Information (PMI) placed on a drawing (2D or 3D).
@@ -32,5 +34,10 @@
         public static CAD_DrawingPMI Create3D(PmiType type) => new CAD_DrawingPMI { Is3D = true, Type = type };
 
         public override string ToString() => $"{(Is3D ? "3D" : "2D")} PMI ({Type})";
+
+        // JSON Serialization
+        public new string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static new CAD_DrawingPMI FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingPMI>(json);
     }
 }

@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using CAD;
+﻿using CAD;
 using Mathematics;
+using Newtonsoft.Json;
 using SE_Library;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CAD
@@ -109,5 +110,10 @@ namespace CAD
                 throw new ArgumentException("Invalid URL.", nameof(url));
             return uri;
         }
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Library FromJson(string json) => JsonConvert.DeserializeObject<CAD_Library>(json);
     }
 }

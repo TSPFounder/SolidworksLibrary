@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Mathematics;
+﻿using Mathematics;
+using Newtonsoft.Json;
 using SE_Library;
+using System;
+using System.Collections.Generic;
 
 
 namespace CAD
@@ -130,6 +131,11 @@ namespace CAD
             slot = col;
             return col;
         }
+
+        // JSON Serialization
+        public new string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static new CAD_DrawingBoM_Table FromJson(string json) => JsonConvert.DeserializeObject<CAD_DrawingBoM_Table>(json);
     }
 }
 

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Mathematics;
+using Newtonsoft.Json;
+using SE_Library;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Mathematics;
-using SE_Library;
 
 namespace CAD
 {
@@ -204,6 +205,11 @@ namespace CAD
 
         public override string ToString()
             => $"CAD_Part(Name={Name ?? "<null>"}, PN={PartNumber ?? "<null>"}, Features={MyFeatures.Count}, Bodies={MyBodies.Count})";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Part FromJson(string json) => JsonConvert.DeserializeObject<CAD_Part>(json);
     }
 }
 

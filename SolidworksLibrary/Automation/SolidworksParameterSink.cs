@@ -5,13 +5,13 @@ using CAD;
 
 namespace SolidworksLibrary.Automation
 {
-    public sealed class SolidworksParameterSink : ICadParameterSink
+    public sealed class SolidworksParameterSink //: ICadParameterSink
     {
         public BridgeSyncResult ApplyParameters(SolidworksModel solidworksModel, IEnumerable<CAD_Parameter> parameters, BridgeSyncOptions options)
         {
             if (solidworksModel is null) throw new ArgumentNullException(nameof(solidworksModel));
             if (parameters is null) throw new ArgumentNullException(nameof(parameters));
-            options ??= new BridgeSyncOptions();
+            if (options == null) options = new BridgeSyncOptions();
 
             var result = new BridgeSyncResult();
             var targetPart = solidworksModel.GetOrCreateTargetPart(options.TargetPartName);

@@ -49,7 +49,7 @@ namespace SolidworksLibrary
 
             if (!string.IsNullOrWhiteSpace(targetName))
             {
-                var existing = MyCADModel.MyParts.Find(part => string.Equals(part.Name, targetName, StringComparison.OrdinalIgnoreCase));
+                var existing = MyCADModel.MyParts.Find(p => string.Equals(p.Name, targetName, StringComparison.OrdinalIgnoreCase));
                 if (existing != null)
                 {
                     MyCADModel.CurrentPart = existing;

@@ -1,4 +1,5 @@
 ﻿
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -141,5 +142,10 @@ namespace CAD
         /// <summary>Simple string for debugging/diagnostics.</summary>
         public override string ToString()
             => $"{MyType} Station (ID: {ID ?? "—"}, Axial={AxialLocation}, Radial={RadialLocation}, Angular={AngularLocation}, Wing={WingLocation})";
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Station FromJson(string json) => JsonConvert.DeserializeObject<CAD_Station>(json);
     }
 }

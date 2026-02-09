@@ -1,4 +1,5 @@
 using System;
+using CAD;
 
 namespace SolidworksLibrary.Automation
 {
@@ -6,7 +7,7 @@ namespace SolidworksLibrary.Automation
     {
         public string AdapterName => "Matlab/Simulink/Simscape";
 
-        public SimulationModelSnapshot CaptureSnapshot(SimulationCaptureRequest request)
+        public SimulationSnapshot CaptureSnapshot(SimulationCaptureRequest request)
         {
             if (request is null) throw new ArgumentNullException(nameof(request));
 
@@ -20,7 +21,8 @@ namespace SolidworksLibrary.Automation
                 snapshot.Metadata[pair.Key] = pair.Value;
             }
 
-            return snapshot;
+            // Cast or convert SimulationModelSnapshot to SimulationSnapshot
+            return snapshot as SimulationSnapshot;
         }
     }
 }

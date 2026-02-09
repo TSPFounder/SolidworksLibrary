@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Documents;
 using Mathematics;
+using Newtonsoft.Json;
 using SE_Library;
-using Documents;
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace CAD
@@ -169,6 +170,11 @@ namespace CAD
         }
 
         public static CAD_Parameter CreateEnumParameter(string name, int initialValue) => CAD_Parameter.CreateIntegerParameter(name, initialValue);
+
+        // JSON Serialization
+        public string ToJson() => JsonConvert.SerializeObject(this, Formatting.Indented,
+            new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+        public static CAD_Parameter FromJson(string json) => JsonConvert.DeserializeObject<CAD_Parameter>(json);
     }
 }
 

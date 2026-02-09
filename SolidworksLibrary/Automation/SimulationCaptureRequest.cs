@@ -5,12 +5,14 @@ namespace SolidworksLibrary.Automation
 {
     public sealed class SimulationCaptureRequest
     {
+        
         public SimulationCaptureRequest(SimulationDomain domain, string modelName, IReadOnlyList<SimulationParameter> parameters)
         {
             Domain = domain;
             ModelName = modelName ?? throw new ArgumentNullException(nameof(modelName));
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
         }
+        
 
         public SimulationDomain Domain { get; }
         public string ModelName { get; }
