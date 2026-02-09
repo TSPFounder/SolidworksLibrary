@@ -80,6 +80,9 @@
     <Compile Include="Automation\ICadParameterSink.cs" />
     <Compile Include="Automation\ISimulationAdapter.cs" />
     <Compile Include="Automation\MatlabSimulinkSimscapeAdapter.cs" />
+    <Compile Include="Automation\MatlabAssemblyRequest.cs" />
+    <Compile Include="Automation\MatlabAssemblyRequestFile.cs" />
+    <Compile Include="Automation\MatlabAssemblyScriptExporter.cs" />
     <Compile Include="Automation\ParameterMappingProfile.cs" />
     <Compile Include="Automation\SimulationCaptureRequest.cs" />
     <Compile Include="Automation\SimulationDomain.cs" />

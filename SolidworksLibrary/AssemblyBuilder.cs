@@ -4,6 +4,9 @@ using SldWorks;
 using SwConst;
 using CAD;
 using Mathematics;
+using SolidworksLibrary.Automation;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace SolidworksLibrary
 {
@@ -13,6 +16,7 @@ namespace SolidworksLibrary
         private AssemblyDoc _assemblyDoc;
         private ModelDoc2 _modelDoc;
         private CAD_Assembly _myCAD_Assy;
+        private readonly Dictionary<string, string> _componentAliasToName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         // -------------------------------------------
         // Constructor
@@ -142,7 +146,20 @@ namespace SolidworksLibrary
                 //MyPart = (CAD_Part)partModel.MyCADModel?.CurrentPart
             };
 
+            _myCAD_Assy.AddComponent(cadComponent);
             return cadComponent;
+        }
+
+        public CAD_Component InsertComponent(string alias, SolidworksModel partModel, bool fixedPosition,
+            double x, double y, double z)
+        {
+            var component = InsertComponent(partModel, fixedPosition, x, y, z);
+            if (component != null && !string.IsNullOrWhiteSpace(alias))
+            {
+                _componentAliasToName[alias] = component.Name;
+            }
+
+            return component;
         }
 
         // -------------------------------------------
@@ -169,6 +186,131 @@ namespace SolidworksLibrary
             }
 
             return component;
+        }
+
+        public BridgeSyncResult BuildFromMatlabRequest(MatlabAssemblyRequest request, IDictionary<string, SolidworksModel> modelByAlias)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (modelByAlias == null) throw new ArgumentNullException(nameof(modelByAlias));
+
+            var result = new BridgeSyncResult();
+            if (!request.IsValid(out var reason))
+            {
+                result.Warnings.Add(reason);
+                return result;
+            }
+
+            _componentAliasToName.Clear();
+
+            foreach (var component in request.Components)
+            {
+                if (!modelByAlias.TryGetValue(component.Alias, out var model) || model == null)
+                {
+                    result.Warnings.Add($"No model found for alias '{component.Alias}'.");
+                    result.ParametersSkipped++;
+                    continue;
+                }
+
+                var created = InsertComponent(component.Alias, model, component.IsFixed, component.X, component.Y, component.Z);
+                if (created == null)
+                {
+                    result.Warnings.Add($"Failed to insert alias '{component.Alias}'.");
+                    result.ParametersSkipped++;
+                }
+                else
+                {
+                    result.ParametersApplied++;
+                }
+            }
+
+            foreach (var mate in request.Mates)
+            {
+                if (!TryResolveAlias(mate.Component1Alias, out var comp1) || !TryResolveAlias(mate.Component2Alias, out var comp2))
+                {
+                    result.Warnings.Add($"Cannot resolve mate aliases '{mate.Component1Alias}' and '{mate.Component2Alias}'.");
+                    result.ParametersSkipped++;
+                    continue;
+                }
+
+                if (CreateComponentMate(comp1, comp2, mate.MateType, mate.Alignment, mate.Value))
+                {
+                    result.ParametersUpdated++;
+                }
+                else
+                {
+                    result.Warnings.Add($"Failed to create mate {mate.MateType} between '{comp1}' and '{comp2}'.");
+                    result.ParametersSkipped++;
+                }
+            }
+
+            return result;
+        }
+
+        public BridgeSyncResult BuildFromMatlabRequestFile(string requestFilePath, IDictionary<string, SolidworksModel> modelByAlias)
+        {
+            var request = MatlabAssemblyRequestFile.Load(requestFilePath);
+            return BuildFromMatlabRequest(request, modelByAlias);
+        }
+
+        public void WriteMatlabRequestTemplate(string requestFilePath)
+        {
+            MatlabAssemblyRequestFile.SaveTemplate(requestFilePath);
+        }
+
+        public void ExportMatlabGuiTemplateScript(string scriptFilePath)
+        {
+            MatlabAssemblyScriptExporter.WriteTemplateScript(scriptFilePath);
+        }
+
+        public void ExportAssemblySummaryForMatlab(string filePath)
+        {
+            var lines = new List<string> { "ComponentName" };
+            lines.AddRange(GetComponentNames());
+            File.WriteAllLines(filePath, lines);
+        }
+
+        public string ExportCadAssemblyJson()
+        {
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(CadAssemblyJsonModel.FromCadAssembly(_myCAD_Assy));
+        }
+
+        public void ExportCadAssemblyJsonFile(string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path is required.", nameof(filePath));
+            File.WriteAllText(filePath, ExportCadAssemblyJson());
+        }
+
+        public CAD_Assembly ImportCadAssemblyJson(string json, bool replaceCurrent = true)
+        {
+            if (string.IsNullOrWhiteSpace(json)) throw new ArgumentException("JSON payload is required.", nameof(json));
+
+            var serializer = new JavaScriptSerializer();
+            var model = serializer.Deserialize<CadAssemblyJsonModel>(json);
+            if (model == null) throw new InvalidOperationException("Unable to deserialize CAD assembly JSON payload.");
+
+            var importedAssembly = model.ToCadAssembly();
+            if (replaceCurrent)
+            {
+                _myCAD_Assy = importedAssembly;
+                _componentAliasToName.Clear();
+                foreach (var component in _myCAD_Assy.MyComponents)
+                {
+                    if (!string.IsNullOrWhiteSpace(component?.Name))
+                    {
+                        _componentAliasToName[component.Name] = component.Name;
+                    }
+                }
+            }
+
+            return importedAssembly;
+        }
+
+        public CAD_Assembly ImportCadAssemblyJsonFile(string filePath, bool replaceCurrent = true)
+        {
+            if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path is required.", nameof(filePath));
+            if (!File.Exists(filePath)) throw new FileNotFoundException("CAD assembly JSON file not found.", filePath);
+            return ImportCadAssemblyJson(File.ReadAllText(filePath), replaceCurrent);
         }
 
         // -------------------------------------------
@@ -529,6 +671,36 @@ namespace SolidworksLibrary
             return null;
         }
 
+        private bool TryResolveAlias(string alias, out string componentName)
+        {
+            componentName = null;
+            if (string.IsNullOrWhiteSpace(alias)) return false;
+
+            if (_componentAliasToName.TryGetValue(alias, out var mapped) && !string.IsNullOrWhiteSpace(mapped))
+            {
+                componentName = mapped;
+                return true;
+            }
+
+            // If not mapped, check whether the alias directly matches an existing component name
+            object[] components = (object[])_assemblyDoc.GetComponents(true);
+            if (components != null)
+            {
+                foreach (object obj in components)
+                {
+                    Component2 comp = (Component2)obj;
+                    if (comp.Name2.Equals(alias, StringComparison.OrdinalIgnoreCase))
+                    {
+                        componentName = alias;
+                        return true;
+                    }
+                }
+            }
+
+            // Alias could not be resolved to a mapped or existing component name
+            return false;
+        }
+
         // -------------------------------------------
         // Component Operations
         // -------------------------------------------
@@ -633,6 +805,77 @@ namespace SolidworksLibrary
         public void ZoomToFit()
         {
             _modelDoc.ViewZoomtofit2();
+        }
+
+        private sealed class CadAssemblyJsonModel
+        {
+            public string Name { get; set; }
+            public string Version { get; set; }
+            public string Description { get; set; }
+            public List<CadComponentJsonModel> Components { get; set; } = new List<CadComponentJsonModel>();
+
+            public static CadAssemblyJsonModel FromCadAssembly(CAD_Assembly assembly)
+            {
+                var model = new CadAssemblyJsonModel();
+                if (assembly == null)
+                {
+                    return model;
+                }
+
+                model.Name = assembly.Name;
+                model.Version = assembly.Version;
+                model.Description = assembly.Description;
+
+                foreach (var component in assembly.MyComponents)
+                {
+                    model.Components.Add(new CadComponentJsonModel
+                    {
+                        Name = component?.Name,
+                        Version = component?.Version,
+                        Path = component?.Path,
+                        IsAssembly = component?.IsAssembly ?? false,
+                        IsConfigurationItem = component?.IsConfigurationItem ?? false
+                    });
+                }
+
+                return model;
+            }
+
+            public CAD_Assembly ToCadAssembly()
+            {
+                var assembly = new CAD_Assembly
+                {
+                    Name = Name,
+                    Version = Version,
+                    Description = Description
+                };
+
+                if (Components != null)
+                {
+                    foreach (var component in Components)
+                    {
+                        assembly.AddComponent(new CAD_Component
+                        {
+                            Name = component?.Name,
+                            Version = component?.Version,
+                            Path = component?.Path,
+                            IsAssembly = component?.IsAssembly ?? false,
+                            IsConfigurationItem = component?.IsConfigurationItem ?? false
+                        });
+                    }
+                }
+
+                return assembly;
+            }
+        }
+
+        private sealed class CadComponentJsonModel
+        {
+            public string Name { get; set; }
+            public string Version { get; set; }
+            public string Path { get; set; }
+            public bool IsAssembly { get; set; }
+            public bool IsConfigurationItem { get; set; }
         }
     }
 }
