@@ -4,6 +4,9 @@ using SldWorks;
 using System;
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
+using SldWorks;
+using CAD;
+using SolidworksLibrary.Automation;
 
 
 namespace SolidworksLibrary
@@ -116,34 +119,20 @@ namespace SolidworksLibrary
             return new SolidworksApp(swApp);
         }
         
-        public FeatureManager GetFeatureMgr()
-        {
-            return SwApp.ActiveDoc.FeatureManager;
-        }
-        
          public void createModel() {
             currentSw_Model = new SolidworksModel();
             currentSw_Model.SwModelObject = SwApp.ActiveDoc;
         }
 
-        public static SketchArc CreateConstructionArc(double centerX, double centerY, double centerZ,
-            double startX, double startY, double startZ,
-            double endX, double endY, double endZ, bool clockwise = true)
+        public CadAutomationBridge CreateAutomationBridge(
+            ISimulationAdapter simulationAdapter,
+            IParameterMapper parameterMapper = null,
+            ICadParameterSink parameterSink = null)
         {
-            var arc = (SketchArc)swApp.ActiveDoc.SketchManager.CreateArc(centerX, centerY, centerZ, startX, startY, startZ,
-                endX, endY, endZ, (short)(clockwise ? 1 : 0));
-            MarkAsConstruction(arc);
-            return arc;
+            var mapper = parameterMapper ?? new ParameterMappingProfile();
+            var sink = parameterSink ?? new SolidworksParameterSink();
+            return new CadAutomationBridge(this, simulationAdapter, mapper, sink);
         }
-
-        private static void MarkAsConstruction(object entity)
-        {
-            if (entity is SketchSegment segment)
-            {
-                segment.ConstructionGeometry = true;
-            }
-        }
-
-
+       
     }
 }
