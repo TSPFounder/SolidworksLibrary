@@ -51,6 +51,7 @@ namespace SolidworksLibrary
                 {
                     return MyCADModel.CurrentPart;
                 }
+                return MyCADModel.CurrentPart;
             }
 
             if (!string.IsNullOrWhiteSpace(targetName))
