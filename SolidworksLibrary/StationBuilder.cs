@@ -20,69 +20,52 @@ namespace SolidworksLibrary
         public enum CylindricalAxis { R, Theta, Z }
         public enum SphericalAxis { R, Theta, Phi }
 
-        public SolidworksModel MyModel { get; set; }
-        public SldWorks.SldWorks SwApp { get; set; }
-        public int Quantity { get; set; }
-        public double Spacing { get; set; }
-        public CoordinateSystemType CoordSystem { get; set; }
-        public int Axis { get; set; }
-
-        public List<CAD_Station> Stations { get; private set; }
-
-        public StationBuilder(SldWorks.SldWorks swApp, SolidworksModel model, int quantity, double spacing,
-            CoordinateSystemType coordSystem, int axis)
+        public static List<CAD_Station> Build(SldWorks.SldWorks swApp, SolidworksModel model,
+            int quantity, double spacing, CoordinateSystemType coordSystem, int axis)
         {
-            SwApp = swApp;
-            MyModel = model;
-            Quantity = quantity;
-            Spacing = spacing;
-            CoordSystem = coordSystem;
-            Axis = axis;
-            Stations = new List<CAD_Station>();
-        }
-
-        public void Build()
-        {
-            ModelDoc2 swModel = (ModelDoc2)MyModel.SwModelObject;
+            ModelDoc2 swModel = (ModelDoc2)model.SwModelObject;
             FeatureManager featMgr = swModel.FeatureManager;
+            var stations = new List<CAD_Station>();
 
-            for (int i = 0; i < Quantity; i++)
+            for (int i = 0; i < quantity; i++)
             {
-                double offset = i * Spacing;
-                double[] position = CalculatePosition(offset);
+                double offset = i * spacing;
+                double[] position = CalculatePosition(coordSystem, axis, spacing, offset);
 
-                CAD_SketchPlane sketchPlane = CreateOffsetPlane(swModel, featMgr, position, i);
+                CAD_SketchPlane sketchPlane = CreateOffsetPlane(swModel, featMgr, model, position, i, coordSystem, axis);
                 if (sketchPlane != null)
                 {
                     CreateCoordinateSystem(swModel, featMgr, position, i, sketchPlane);
-                    CreateSketchOnPlane(swModel, sketchPlane, i);
+                    CreateSketchOnPlane(swModel, sketchPlane, i, coordSystem, axis);
 
                     CAD_Station station = new CAD_Station(sketchPlane,
-                        "Station_" + (i + 1), GetStationType());
+                        "Station_" + (i + 1), GetStationType(coordSystem, axis));
                     station.Name = "Station_" + (i + 1);
                     station.SetLocation(station.MyType, offset);
-                    station.MyModel = MyModel.MyCADModel;
+                    station.MyModel = model.MyCADModel;
 
-                    Stations.Add(station);
+                    stations.Add(station);
                 }
             }
+
+            return stations;
         }
 
-        public CAD_Station.StationTypeEnum GetStationType()
+        public static CAD_Station.StationTypeEnum GetStationType(CoordinateSystemType coordSystem, int axis)
         {
-            switch (CoordSystem)
+            switch (coordSystem)
             {
                 case CoordinateSystemType.Cartesian:
                     return CAD_Station.StationTypeEnum.Axial;
                 case CoordinateSystemType.Cylindrical:
-                    CylindricalAxis cyAxis = (CylindricalAxis)Axis;
+                    CylindricalAxis cyAxis = (CylindricalAxis)axis;
                     if (cyAxis == CylindricalAxis.Theta)
                         return CAD_Station.StationTypeEnum.Angular;
                     if (cyAxis == CylindricalAxis.R)
                         return CAD_Station.StationTypeEnum.Radial;
                     return CAD_Station.StationTypeEnum.Axial;
                 case CoordinateSystemType.Spherical:
-                    SphericalAxis spAxis = (SphericalAxis)Axis;
+                    SphericalAxis spAxis = (SphericalAxis)axis;
                     if (spAxis == SphericalAxis.R)
                         return CAD_Station.StationTypeEnum.Radial;
                     return CAD_Station.StationTypeEnum.Angular;
@@ -91,9 +74,9 @@ namespace SolidworksLibrary
             }
         }
 
-        public CAD_SketchPlane.GeometryTypeEnum GetGeometryType()
+        public static CAD_SketchPlane.GeometryTypeEnum GetGeometryType(CoordinateSystemType coordSystem)
         {
-            switch (CoordSystem)
+            switch (coordSystem)
             {
                 case CoordinateSystemType.Cartesian:
                     return CAD_SketchPlane.GeometryTypeEnum.Cartesian;
@@ -106,32 +89,33 @@ namespace SolidworksLibrary
             }
         }
 
-        public double[] CalculatePosition(double offset)
+        public static double[] CalculatePosition(CoordinateSystemType coordSystem, int axis,
+            double spacing, double offset)
         {
             double[] position = new double[3];
 
-            switch (CoordSystem)
+            switch (coordSystem)
             {
                 case CoordinateSystemType.Cartesian:
-                    position = CalculateCartesian(offset);
+                    position = CalculateCartesian(axis, offset);
                     break;
                 case CoordinateSystemType.Cylindrical:
-                    position = CalculateCylindrical(offset);
+                    position = CalculateCylindrical(axis, spacing, offset);
                     break;
                 case CoordinateSystemType.Spherical:
-                    position = CalculateSpherical(offset);
+                    position = CalculateSpherical(axis, spacing, offset);
                     break;
             }
 
             return position;
         }
 
-        private double[] CalculateCartesian(double offset)
+        private static double[] CalculateCartesian(int axis, double offset)
         {
             double[] position = new double[3];
-            CartesianAxis axis = (CartesianAxis)Axis;
+            CartesianAxis cAxis = (CartesianAxis)axis;
 
-            switch (axis)
+            switch (cAxis)
             {
                 case CartesianAxis.X:
                     position[0] = offset;
@@ -147,20 +131,20 @@ namespace SolidworksLibrary
             return position;
         }
 
-        private double[] CalculateCylindrical(double offset)
+        private static double[] CalculateCylindrical(int axis, double spacing, double offset)
         {
             double[] position = new double[3];
-            CylindricalAxis axis = (CylindricalAxis)Axis;
+            CylindricalAxis cyAxis = (CylindricalAxis)axis;
 
-            switch (axis)
+            switch (cyAxis)
             {
                 case CylindricalAxis.R:
                     position[0] = offset;
                     break;
                 case CylindricalAxis.Theta:
                     double theta = offset;
-                    position[0] = Spacing * Math.Cos(theta);
-                    position[1] = Spacing * Math.Sin(theta);
+                    position[0] = spacing * Math.Cos(theta);
+                    position[1] = spacing * Math.Sin(theta);
                     break;
                 case CylindricalAxis.Z:
                     position[2] = offset;
@@ -170,55 +154,56 @@ namespace SolidworksLibrary
             return position;
         }
 
-        private double[] CalculateSpherical(double offset)
+        private static double[] CalculateSpherical(int axis, double spacing, double offset)
         {
             double[] position = new double[3];
-            SphericalAxis axis = (SphericalAxis)Axis;
+            SphericalAxis spAxis = (SphericalAxis)axis;
 
-            switch (axis)
+            switch (spAxis)
             {
                 case SphericalAxis.R:
                     position[0] = offset;
                     break;
                 case SphericalAxis.Theta:
                     double theta = offset;
-                    position[0] = Spacing * Math.Sin(theta);
-                    position[2] = Spacing * Math.Cos(theta);
+                    position[0] = spacing * Math.Sin(theta);
+                    position[2] = spacing * Math.Cos(theta);
                     break;
                 case SphericalAxis.Phi:
                     double phi = offset;
-                    position[0] = Spacing * Math.Cos(phi);
-                    position[1] = Spacing * Math.Sin(phi);
+                    position[0] = spacing * Math.Cos(phi);
+                    position[1] = spacing * Math.Sin(phi);
                     break;
             }
 
             return position;
         }
 
-        private CAD_SketchPlane CreateOffsetPlane(ModelDoc2 swModel, FeatureManager featMgr,
-            double[] position, int index)
+        private static CAD_SketchPlane CreateOffsetPlane(ModelDoc2 swModel, FeatureManager featMgr,
+            SolidworksModel model, double[] position, int index,
+            CoordinateSystemType coordSystem, int axis)
         {
             double distance = Math.Sqrt(position[0] * position[0] +
                                         position[1] * position[1] +
                                         position[2] * position[2]);
 
             string planeName = "Station_Plane_" + (index + 1);
-            double[] normal = GetPlaneNormal();
+            double[] normal = GetPlaneNormal(coordSystem, axis);
 
             if (distance == 0 && index == 0)
             {
-                Feature baseFeat = GetBasePlane(swModel);
+                Feature baseFeat = GetBasePlane(swModel, coordSystem, axis);
                 if (baseFeat == null) return null;
 
                 CAD_SketchPlane sketchPlane = new CAD_SketchPlane(planeName,
-                    CAD_SketchPlane.FunctionalTypeEnum.Section, GetGeometryType());
+                    CAD_SketchPlane.FunctionalTypeEnum.Section, GetGeometryType(coordSystem));
                 sketchPlane.SetNormal(normal[0], normal[1], normal[2]);
-                sketchPlane.MyModel = MyModel.MyCADModel;
+                sketchPlane.MyModel = model.MyCADModel;
                 sketchPlane.Path = baseFeat.Name;
                 return sketchPlane;
             }
 
-            Feature baseFeature = GetBasePlane(swModel);
+            Feature baseFeature = GetBasePlane(swModel, coordSystem, axis);
             if (baseFeature == null) return null;
 
             baseFeature.Select2(false, 0);
@@ -233,27 +218,27 @@ namespace SolidworksLibrary
             }
 
             CAD_SketchPlane result = new CAD_SketchPlane(planeName,
-                CAD_SketchPlane.FunctionalTypeEnum.Section, GetGeometryType());
+                CAD_SketchPlane.FunctionalTypeEnum.Section, GetGeometryType(coordSystem));
             result.SetNormal(normal[0], normal[1], normal[2]);
-            result.MyModel = MyModel.MyCADModel;
+            result.MyModel = model.MyCADModel;
             result.Path = planeName;
             return result;
         }
 
-        private double[] GetPlaneNormal()
+        private static double[] GetPlaneNormal(CoordinateSystemType coordSystem, int axis)
         {
             double[] normal = new double[3];
 
-            switch (CoordSystem)
+            switch (coordSystem)
             {
                 case CoordinateSystemType.Cartesian:
-                    CartesianAxis cAxis = (CartesianAxis)Axis;
+                    CartesianAxis cAxis = (CartesianAxis)axis;
                     if (cAxis == CartesianAxis.X) normal[0] = 1;
                     else if (cAxis == CartesianAxis.Y) normal[1] = 1;
                     else normal[2] = 1;
                     break;
                 case CoordinateSystemType.Cylindrical:
-                    CylindricalAxis cyAxis = (CylindricalAxis)Axis;
+                    CylindricalAxis cyAxis = (CylindricalAxis)axis;
                     if (cyAxis == CylindricalAxis.Z) normal[2] = 1;
                     else normal[1] = 1;
                     break;
@@ -265,19 +250,20 @@ namespace SolidworksLibrary
             return normal;
         }
 
-        private Feature GetBasePlane(ModelDoc2 swModel)
+        private static Feature GetBasePlane(ModelDoc2 swModel,
+            CoordinateSystemType coordSystem, int axis)
         {
             string planeName;
 
-            switch (CoordSystem)
+            switch (coordSystem)
             {
                 case CoordinateSystemType.Cartesian:
-                    CartesianAxis cAxis = (CartesianAxis)Axis;
+                    CartesianAxis cAxis = (CartesianAxis)axis;
                     planeName = cAxis == CartesianAxis.X ? "Right Plane" :
                                 cAxis == CartesianAxis.Y ? "Top Plane" : "Front Plane";
                     break;
                 case CoordinateSystemType.Cylindrical:
-                    CylindricalAxis cyAxis = (CylindricalAxis)Axis;
+                    CylindricalAxis cyAxis = (CylindricalAxis)axis;
                     planeName = cyAxis == CylindricalAxis.Z ? "Front Plane" : "Top Plane";
                     break;
                 default:
@@ -288,7 +274,7 @@ namespace SolidworksLibrary
             return FindFeatureByName(swModel, planeName);
         }
 
-        private Feature FindFeatureByName(ModelDoc2 swModel, string name)
+        private static Feature FindFeatureByName(ModelDoc2 swModel, string name)
         {
             Feature feat = (Feature)swModel.FirstFeature();
             while (feat != null)
@@ -300,7 +286,7 @@ namespace SolidworksLibrary
             return null;
         }
 
-        private void CreateCoordinateSystem(ModelDoc2 swModel, FeatureManager featMgr,
+        private static void CreateCoordinateSystem(ModelDoc2 swModel, FeatureManager featMgr,
             double[] position, int index, CAD_SketchPlane sketchPlane)
         {
             swModel.ClearSelection2(true);
@@ -329,7 +315,8 @@ namespace SolidworksLibrary
             sketchPlane.MyCoordinateSystem = csys;
         }
 
-        private void CreateSketchOnPlane(ModelDoc2 swModel, CAD_SketchPlane sketchPlane, int index)
+        private static void CreateSketchOnPlane(ModelDoc2 swModel, CAD_SketchPlane sketchPlane,
+            int index, CoordinateSystemType coordSystem, int axis)
         {
             Feature planeFeat = FindFeatureByName(swModel, sketchPlane.Path + sketchPlane.Name);
             if (planeFeat != null)
