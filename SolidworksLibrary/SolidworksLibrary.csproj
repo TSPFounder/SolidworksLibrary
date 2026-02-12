@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,6 +57,9 @@
     <Reference Include="MathematicsLibrary">
       <HintPath>..\..\..\MathematicsLibrary\MathematicsLibrary\MathematicsLibrary\bin\Debug\net10.0\MathematicsLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="StructuresLibrary">
       <HintPath>..\..\..\StructuresLibrary\StructuresLibrary\StructuresLibrary\bin\Debug\net10.0\StructuresLibrary.dll</HintPath>
     </Reference>
@@ -63,6 +68,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -84,22 +92,75 @@
     <Compile Include="Automation\SimulationCaptureRequest.cs" />
     <Compile Include="Automation\SimulationDomain.cs" />
     <Compile Include="Automation\SimulationModelSnapshot.cs" />
-    <Compile Include="Automation\SimulationParameter.cs" />
     <Compile Include="Automation\SolidworksParameterSink.cs" />
     <Compile Include="AssemblyBuilder.cs" />
+    <Compile Include="Automation\SolidworksParameterSinkAdapter.cs" />
+    <Compile Include="CAD _Component.cs" />
+    <Compile Include="CAD_Assembly.cs" />
+    <Compile Include="CAD_Body.cs" />
+    <Compile Include="CAD_BoM.cs" />
+    <Compile Include="CAD_Configuration.cs" />
+    <Compile Include="CAD_Constraint.cs" />
+    <Compile Include="CAD_ConstructionGeometery.cs" />
+    <Compile Include="CAD_Dimension.cs" />
+    <Compile Include="CAD_Drawing.cs" />
+    <Compile Include="CAD_DrawingBoM_Table.cs" />
+    <Compile Include="CAD_DrawingElement.cs" />
+    <Compile Include="CAD_DrawingNote.cs" />
+    <Compile Include="CAD_DrawingPMI.cs" />
+    <Compile Include="CAD_DrawingSheet.cs" />
+    <Compile Include="CAD_DrawingTable.cs" />
+    <Compile Include="CAD_DrawingView.cs" />
+    <Compile Include="CAD_Feature.cs" />
+    <Compile Include="CAD_File.cs" />
+    <Compile Include="CAD_Hole.cs" />
+    <Compile Include="CAD_Interface.cs" />
+    <Compile Include="CAD_Joint.cs" />
+    <Compile Include="CAD_Library.cs" />
+    <Compile Include="CAD_Model.cs" />
+    <Compile Include="CAD_ModelStationBuilder.cs" />
+    <Compile Include="CAD_Parameter.cs" />
+    <Compile Include="CAD_ParameterValue.cs" />
+    <Compile Include="CAD_Part.cs" />
+    <Compile Include="CAD_Sketch.cs" />
+    <Compile Include="CAD_SketchElement.cs" />
+    <Compile Include="CAD_SketchPlane.cs" />
+    <Compile Include="CAD_Station.cs" />
+    <Compile Include="CAD_Surface.cs" />
+    <Compile Include="Circle.cs" />
     <Compile Include="ConstructionBuilder.cs" />
+    <Compile Include="CoordinateSystem.cs" />
     <Compile Include="DrawingBuilder.cs" />
     <Compile Include="FeatureBuilder.cs" />
+    <Compile Include="MassProperties.cs" />
+    <Compile Include="Matrix.cs" />
+    <Compile Include="Mesh.cs" />
+    <Compile Include="MeshElement.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="PartBuilder.cs" />
+    <Compile Include="Plane.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="Primitive.cs" />
+    <Compile Include="Prism.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quadrilateral.cs" />
+    <Compile Include="Segment.cs" />
     <Compile Include="SketchBuilder.cs" />
     <Compile Include="SolidworksApp.cs" />
     <Compile Include="SolidworksModel.cs" />
+    <Compile Include="Sphere.cs" />
     <Compile Include="StationBuilder.cs" />
+    <Compile Include="Surface.cs" />
+    <Compile Include="ThreeDGeometry.cs" />
+    <Compile Include="Torus.cs" />
+    <Compile Include="Triangle.cs" />
+    <Compile Include="TwoDGeometry.cs" />
+    <Compile Include="Vector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="CosmosWorksLib">
@@ -176,4 +237,11 @@
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+  </Target>
 </Project>

@@ -1,0 +1,28 @@
+﻿using System.Collections.Generic;
+
+namespace SolidworksLibrary.Automation
+{
+    public interface ISimulationAdapter
+    {
+        SimulationSnapshot CaptureSnapshot(SimulationCaptureRequest request);
+    }
+
+    public class SimulationCaptureRequest { }
+
+    public class SimulationSnapshot
+    {
+        public IEnumerable<SimulationParameter> Parameters { get; set; }
+    }
+
+    public class SimulationParameter
+    {
+        public string Name { get; set; }
+        public double Value { get; set; }
+        public string Unit { get; set; }
+
+        public CadParameter ToCadParameter(string cadName)
+        {
+            return new CadParameter { Name = cadName, Value = Value, Unit = Unit };
+        }
+    }
+}

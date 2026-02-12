@@ -1,0 +1,7 @@
+﻿namespace SolidworksLibrary.Automation
+{
+    public interface IParameterMapper
+    {
+        string MapToCadName(SimulationParameter parameter);
+    }
+}

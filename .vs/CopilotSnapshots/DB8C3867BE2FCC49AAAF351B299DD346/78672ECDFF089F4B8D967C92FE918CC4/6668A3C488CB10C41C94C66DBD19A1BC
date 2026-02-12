@@ -1,0 +1,10 @@
+﻿using System.Collections.Generic;
+using CAD;
+
+namespace SolidworksLibrary.Automation
+{
+    public interface ICadParameterSink
+    {
+        BridgeSyncResult ApplyParameters(SolidworksModel solidworksModel, IEnumerable<CAD_Parameter> parameters, BridgeSyncOptions options);
+    }
+}

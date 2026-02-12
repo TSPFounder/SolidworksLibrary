@@ -34,3 +34,6 @@ D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\Solidwork
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\SysML_Library.pdb
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\SystemsEngineeringLibrary.pdb
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\obj\Debug\Solidwor.B8B251DB.Up2Date
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\Newtonsoft.Json.xml
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Data.SQLite.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Data.SQLite.xml
