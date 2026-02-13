@@ -38,9 +38,6 @@
     <Reference Include="ApplicationLibrary">
       <HintPath>..\..\..\ApplicationLibrary\ApplicationLibrary\ApplicationLibrary\bin\Debug\net10.0\ApplicationLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="CAD_Library">
-      <HintPath>..\..\..\CAD_Library\CAD_Library\CAD_Library\bin\Debug\net10.0\CAD_Library.dll</HintPath>
-    </Reference>
     <Reference Include="CommonObjectsLibrary">
       <HintPath>..\..\..\CommonObjectsLibrary\CommonObjectsLibrary\CommonObjectsLibrary\bin\Debug\net10.0\CommonObjectsLibrary.dll</HintPath>
     </Reference>
@@ -67,6 +64,10 @@
       <HintPath>..\..\..\SysML_Library\SysML_Library\SysML_Library\bin\Debug\net10.0\SysML_Library.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=10.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.10.0.3\lib\net462\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\lib\net46\System.Data.SQLite.dll</HintPath>
@@ -82,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings.cs" />
     <Compile Include="Automation\BridgeSyncOptions.cs" />
     <Compile Include="Automation\BridgeSyncResult.cs" />
     <Compile Include="Automation\CadAutomationBridge.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Segment.cs" />
     <Compile Include="SketchBuilder.cs" />
     <Compile Include="SolidworksApp.cs" />
+    <Compile Include="SolidworksConfig.cs" />
     <Compile Include="SolidworksModel.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="StationBuilder.cs" />

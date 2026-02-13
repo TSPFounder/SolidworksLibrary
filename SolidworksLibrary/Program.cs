@@ -9,7 +9,7 @@ namespace SolidworksLibrary
         [STAThread]
         static void Main(string[] args)
         {
-            SolidworksApp swApplication = SolidworksApp.Connect(true);
+            SolidworksApp swApplication = SolidworksApp.Connect(true, AppSettings.DatabasePath);
 
             MatlabSimulinkSimscapeAdapter adapter = new MatlabSimulinkSimscapeAdapter();
             var bridge = swApplication.CreateAutomationBridge(adapter);

@@ -37,3 +37,5 @@ D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\Solidwork
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\Newtonsoft.Json.xml
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Data.SQLite.dll
 D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Data.SQLite.xml
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Configuration.ConfigurationManager.dll
+D:\DreamWorldMaker\Projects\DotNet\SolidworksLibrary\SolidworksLibrary\SolidworksLibrary\bin\Debug\System.Configuration.ConfigurationManager.xml

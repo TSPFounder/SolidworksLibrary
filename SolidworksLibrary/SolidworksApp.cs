@@ -68,14 +68,14 @@ namespace SolidworksLibrary
         private SldWorks.FeatureManager _currentFeatureManager;
         private SldWorks.SketchManager _currentSketchManager;
 
-        private SolidworksApp(SldWorks.SldWorks swApp)
+        private SolidworksApp(SldWorks.SldWorks swApp, string databasePath)
         {
             _SwApp = swApp; //  throw new ArgumentNullException(nameof(swApp));
             _currentSw_Model= new SolidworksModel();
             _currentAssyDoc = new AssemblyBuilder();
-            _currentPartDoc = new PartBuilder();
+            _currentPartDoc = new PartBuilder(databasePath);
             _currentDrawingDoc = new DrawingBuilder();
-            _currentFeatureDoc = new FeatureBuilder();
+            _currentFeatureDoc = new FeatureBuilder(databasePath);
             //currentStationBuilder = new StationBuilder();
             //currentFeatureManager = swApp.ActiveDoc.FeatureManager;
             _currentSketchManager = swApp.ActiveDoc.SketchManager;
@@ -86,7 +86,7 @@ namespace SolidworksLibrary
 
         private static readonly ConcurrentDictionary<string, SolidworksApp> _sessions = new ConcurrentDictionary<string, SolidworksApp>();
 
-        public static SolidworksApp Connect(bool visible)
+        public static SolidworksApp Connect(bool visible, string databasePath)
         {
             SldWorks.SldWorks swApp = null;
 
@@ -117,7 +117,7 @@ namespace SolidworksLibrary
             }
             
 
-            return new SolidworksApp(swApp);
+            return new SolidworksApp(swApp, databasePath);
         }
         
          public void createModel() {
